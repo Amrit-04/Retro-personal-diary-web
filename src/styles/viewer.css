@@ -1,0 +1,104 @@
+/* Retro Entry Viewer Styling */
+.viewer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+.viewer-header {
+  border-bottom: 1px solid var(--bevel-shadow);
+  padding-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.viewer-title-area {
+  flex: 1;
+}
+
+.viewer-entry-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-titlebar);
+  font-family: var(--font-retro);
+  margin-bottom: 4px;
+}
+
+.viewer-entry-date {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.viewer-admin-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.viewer-paper {
+  flex: 1;
+  background: #fafaf5; /* Subtle aged paper look */
+  border-top: 2px solid var(--bevel-shadow);
+  border-left: 2px solid var(--bevel-shadow);
+  border-right: 2px solid var(--bevel-light);
+  border-bottom: 2px solid var(--bevel-light);
+  box-shadow: inset 1px 1px var(--bevel-dark-shadow);
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.viewer-doodle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  padding: 12px;
+  border: 1px solid #d0d0c8;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.viewer-doodle-image {
+  max-width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  border-radius: 2px;
+  display: block;
+}
+
+.viewer-content {
+  font-family: var(--font-journal);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--color-text-journal);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+@media (max-width: 600px) {
+  .viewer-paper {
+    padding: 12px;
+  }
+  .viewer-entry-title {
+    font-size: 16px;
+  }
+  .viewer-content {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .viewer-doodle-image {
+    max-height: 240px;
+  }
+}

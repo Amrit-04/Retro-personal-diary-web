@@ -1,0 +1,51 @@
+/* Retro Dialog / Alert / Confirm modal styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: 16px;
+}
+
+.modal-dialog {
+  width: 360px;
+  max-width: 90vw;
+  background: var(--color-surface);
+  border-top: 2px solid var(--bevel-light);
+  border-left: 2px solid var(--bevel-light);
+  border-right: 2px solid var(--bevel-dark-shadow);
+  border-bottom: 2px solid var(--bevel-dark-shadow);
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+  animation: windowPop 0.1s ease-out;
+}
+
+.modal-body {
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.modal-icon {
+  font-size: 24px;
+}
+
+.modal-message {
+  flex: 1;
+  word-break: break-word;
+}
+
+.modal-footer {
+  padding: 8px 16px 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

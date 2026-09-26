@@ -1,0 +1,127 @@
+/* Retro Admin Entry Editor Styling */
+.editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editor-label {
+  font-weight: bold;
+  font-size: 12px;
+  color: var(--color-text);
+  display: flex;
+  justify-content: space-between;
+}
+
+.editor-input,
+.editor-textarea {
+  font-family: var(--font-retro);
+  font-size: 13px;
+  padding: 6px 8px;
+  background: var(--color-white);
+  border-top: 2px solid var(--bevel-shadow);
+  border-left: 2px solid var(--bevel-shadow);
+  border-right: 2px solid var(--bevel-light);
+  border-bottom: 2px solid var(--bevel-light);
+  box-shadow: inset 1px 1px var(--bevel-dark-shadow);
+  outline: none;
+  width: 100%;
+}
+
+.editor-input:focus,
+.editor-textarea:focus {
+  border-color: var(--color-titlebar);
+  background: #fffff8;
+}
+
+.editor-textarea {
+  min-height: 140px;
+  resize: vertical;
+  font-family: var(--font-journal);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Drag and Drop Zone */
+.doodle-dropzone {
+  border: 2px dashed var(--bevel-shadow);
+  background: #f0f0f0;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 120px;
+  position: relative;
+}
+
+.doodle-dropzone.drag-over {
+  border-color: var(--color-titlebar);
+  background: #e0e8f8;
+}
+
+.doodle-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.doodle-preview-image {
+  max-width: 220px;
+  max-height: 160px;
+  object-fit: contain;
+  border: 1px solid var(--bevel-shadow);
+  background: #ffffff;
+  padding: 2px;
+}
+
+.doodle-file-input {
+  display: none;
+}
+
+.editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--bevel-shadow);
+}
+
+.editor-status {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--color-titlebar);
+  margin-right: auto;
+  align-self: center;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 14px;
+  background: #dfdfdf;
+  border-top: 1px solid var(--bevel-shadow);
+  border-left: 1px solid var(--bevel-shadow);
+  border-right: 1px solid var(--bevel-light);
+  border-bottom: 1px solid var(--bevel-light);
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--color-titlebar);
+  transition: width 0.1s ease;
+}

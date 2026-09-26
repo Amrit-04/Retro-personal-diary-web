@@ -1,0 +1,33 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper function: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function: Check if user is admin via custom auth claim
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.admin == true;
+    }
+
+    // Doodle images for entries
+    match /doodles/{allPaths=**} {
+      // Any authenticated user can view doodles
+      allow read: if isAuthenticated();
+
+      // Only admin can upload or delete doodles
+      // Enforce image mime types and max file size (2MB) on create/update
+      allow write: if isAdmin()
+        && (request.resource == null || (
+          request.resource.contentType.matches('image/.*')
+          && request.resource.size < 2 * 1024 * 1024
+        ));
+    }
+
+    // Deny all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
