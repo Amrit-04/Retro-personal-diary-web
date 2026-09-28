@@ -1,50 +1,59 @@
 :root {
-  /* Retro OS Color Palette */
-  --color-desktop: #008080;         /* Classic Teal desktop */
-  --color-surface: #c0c0c0;         /* Window and chrome surface */
-  --color-surface-light: #dfdfdf;   /* Light surface */
-  --color-surface-dark: #808080;    /* Dark bevel shadow */
-  --color-surface-darker: #404040;  /* Deep shadow */
+  /* Windows XP Luna Color Palette */
+  --xp-blue-dark: #00138c;
+  --xp-blue-primary: #0055ea;
+  --xp-blue-light: #2272fc;
+  --xp-blue-titlebar-start: #0058ee;
+  --xp-blue-titlebar-end: #0338c6;
+
+  --xp-surface: #ece9d8;          /* Standard XP Dialog Beige / Gray */
+  --xp-surface-light: #ffffff;
+  --xp-surface-dark: #aca899;
+
+  --xp-taskbar-bg-start: #245edb;
+  --xp-taskbar-bg-mid: #1941a5;
+  --xp-taskbar-bg-end: #123485;
+  --xp-taskbar-tray: #0f5cd6;
+
+  --xp-start-green-start: #388e3c;
+  --xp-start-green-mid: #43a047;
+  --xp-start-green-end: #1b5e20;
+
+  --xp-border-color: #0055ea;
+  --xp-input-border: #7f9db9;
+
+  --xp-selection: #316ac5;
+  --xp-selection-light: rgba(49, 106, 197, 0.35);
+
+  --color-desktop: #245edb;
+  --color-surface: var(--xp-surface);
+  --color-surface-light: var(--xp-surface-light);
+  --color-surface-dark: var(--xp-surface-dark);
   --color-white: #ffffff;
   --color-black: #000000;
 
-  --color-titlebar: #000080;        /* Active titlebar navy blue */
+  --color-titlebar: var(--xp-blue-primary);
   --color-titlebar-text: #ffffff;
-  --color-titlebar-inactive: #808080;
-  --color-titlebar-inactive-text: #c0c0c0;
+  --color-titlebar-inactive: #7c9be7;
+  --color-titlebar-inactive-text: #d8e4f8;
 
   --color-text: #000000;
-  --color-text-muted: #555555;
+  --color-text-muted: #444444;
   --color-text-journal: #1a1a1a;
 
-  --color-selection: #000080;
+  --color-selection: var(--xp-selection);
   --color-selection-text: #ffffff;
 
-  --color-accent: #008080;
-  --color-danger: #a00000;
-  --color-success: #008000;
-  --color-warning: #808000;
-
-  /* Classic 3D Bevel Borders */
-  --border-outset: 2px solid;
-  --border-inset: 2px solid;
-  --bevel-light: #ffffff;
-  --bevel-shadow: #808080;
-  --bevel-dark-shadow: #000000;
+  --color-danger: #cc0000;
+  --color-success: #2e7d32;
+  --color-warning: #d97706;
 
   /* Typography */
-  --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-retro: "MS Sans Serif", "Lucida Console", Tahoma, Geneva, Verdana, sans-serif;
-  --font-mono: "Consolas", "Courier New", Courier, monospace;
+  --font-system: Tahoma, "Segoe UI", Arial, sans-serif;
+  --font-retro: Tahoma, "Segoe UI", Arial, sans-serif;
+  --font-mono: "Lucida Console", Consolas, "Courier New", monospace;
   --font-journal: "Georgia", "Times New Roman", serif;
 
-  /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 12px;
-  --space-lg: 16px;
-  --space-xl: 24px;
-
   /* Taskbar */
-  --taskbar-height: 38px;
+  --taskbar-height: 30px;
 }

@@ -1,65 +1,209 @@
-/* Retro File Explorer Styling */
+/* Windows XP Explorer / My Computer Styling */
 .explorer-container {
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 380px;
-  gap: 8px;
+  min-height: 420px;
+  gap: 4px;
 }
 
+/* XP Standard Buttons Toolbar */
 .explorer-toolbar {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 6px;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--bevel-shadow);
+  gap: 2px;
+  padding: 3px 6px;
+  background: var(--xp-surface);
+  border-bottom: 1px solid #d4d0c8;
   flex-wrap: wrap;
 }
 
-.explorer-path-bar {
+.explorer-tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-family: var(--font-retro);
+  font-size: 11px;
+  color: #000000;
+  cursor: pointer;
+}
+
+.explorer-tool-btn:hover:not(:disabled) {
+  background: #ffffff;
+  border-color: #316ac5;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.explorer-tool-btn:active:not(:disabled) {
+  background: #e0edff;
+  border-color: #316ac5;
+}
+
+.explorer-tool-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.explorer-tool-separator {
+  width: 1px;
+  height: 20px;
+  background: #aca899;
+  margin: 0 4px;
+}
+
+/* XP Address Bar */
+.explorer-address-bar {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding: 2px 6px 4px;
+  background: var(--xp-surface);
+  border-bottom: 1px solid #aca899;
   font-size: 11px;
-  width: 100%;
 }
 
-.explorer-path-label {
-  font-weight: bold;
-  color: var(--color-text-muted);
-}
-
-.explorer-path-input {
-  flex: 1;
-  padding: 3px 6px;
-  font-family: var(--font-mono);
+.explorer-address-label {
+  color: #444444;
   font-size: 11px;
-  background: var(--color-white);
-  border-top: 1px solid var(--bevel-shadow);
-  border-left: 1px solid var(--bevel-shadow);
-  border-right: 1px solid var(--bevel-light);
-  border-bottom: 1px solid var(--bevel-light);
-  outline: none;
 }
 
-.explorer-content-pane {
+.explorer-address-input-wrapper {
   flex: 1;
   display: flex;
-  background: var(--color-white);
-  border-top: 2px solid var(--bevel-shadow);
-  border-left: 2px solid var(--bevel-shadow);
-  border-right: 2px solid var(--bevel-light);
-  border-bottom: 2px solid var(--bevel-light);
-  box-shadow: inset 1px 1px var(--bevel-dark-shadow);
-  overflow: auto;
-  min-height: 250px;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--xp-input-border);
+  padding: 1px 4px;
+  height: 22px;
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.explorer-address-icon {
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+.explorer-address-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-retro);
+  font-size: 11px;
+  outline: none;
+  color: #000000;
+}
+
+.explorer-go-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 100%);
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  height: 22px;
+}
+
+.explorer-go-btn:hover {
+  background: #e0edff;
+  border-color: #316ac5;
+}
+
+/* Main Two-Column View Area */
+.explorer-main-split {
+  flex: 1;
+  display: flex;
+  background: #ffffff;
+  border: 1px solid var(--xp-input-border);
+  min-height: 300px;
+  overflow: hidden;
+}
+
+/* Left XP Task Pane (Blue Accordion Boxes) */
+.explorer-task-pane {
+  width: 210px;
+  background: linear-gradient(to bottom, #748dc7 0%, #6375d6 100%);
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  border-right: 1px solid #5061b8;
+  flex-shrink: 0;
+}
+
+.xp-task-box {
+  background: #d3e5fa;
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.xp-task-box-header {
+  background: linear-gradient(to right, #215dc6 0%, #638ae6 100%);
+  color: #ffffff;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  text-shadow: 1px 1px 1px #0c327d;
+  user-select: none;
+}
+
+.xp-task-box-body {
+  padding: 6px 8px;
+  background: #ffffff;
+  border: 1px solid #d3e5fa;
+  border-top: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.xp-task-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #0c327d;
+  font-size: 11px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.xp-task-link:hover {
+  text-decoration: underline;
+  color: #215dc6;
+}
+
+.xp-task-details-text {
+  font-size: 11px;
+  color: #333333;
+  line-height: 1.4;
+}
+
+/* Right Content Pane (Folder & File Grid) */
+.explorer-content-pane {
+  flex: 1;
+  background: #ffffff;
+  overflow-y: auto;
+  display: flex;
 }
 
 .explorer-grid {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 12px;
   padding: 12px;
   align-content: start;
@@ -70,21 +214,24 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 8px 4px;
+  padding: 6px 4px;
   cursor: pointer;
   border: 1px dotted transparent;
   text-align: center;
   border-radius: 2px;
   user-select: none;
+  width: 100%;
 }
 
 .explorer-item:hover {
-  background: rgba(0, 0, 128, 0.1);
+  background: #e8f0fe;
+  border-color: #b0c8f8;
 }
 
-.explorer-item.selected {
-  background: var(--color-selection);
-  color: var(--color-selection-text);
+.explorer-item.selected,
+.explorer-item:active {
+  background: var(--xp-selection);
+  color: #ffffff;
 }
 
 .explorer-item-icon {
@@ -100,26 +247,27 @@
   max-width: 40px;
   max-height: 40px;
   object-fit: contain;
-  border: 1px solid #c0c0c0;
+  border: 1px solid #7f9db9;
   background: #ffffff;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .explorer-item-title {
   font-size: 11px;
   font-family: var(--font-retro);
   word-break: break-word;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .explorer-item-date {
-  font-size: 9px;
-  color: var(--color-text-muted);
+  font-size: 10px;
+  color: #666666;
   margin-top: 2px;
-  font-family: var(--font-mono);
 }
 
 .explorer-item.selected .explorer-item-date {
-  color: #dfdfdf;
+  color: #e0edff;
 }
 
 .explorer-empty-state {
@@ -129,19 +277,22 @@
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: var(--color-text-muted);
+  color: #666666;
   gap: 8px;
   padding: 32px;
 }
 
 .explorer-empty-icon {
   font-size: 32px;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
+  .explorer-task-pane {
+    display: none; /* Hide left task pane on mobile to give full screen to folders */
+  }
   .explorer-grid {
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 8px;
     padding: 8px;
   }

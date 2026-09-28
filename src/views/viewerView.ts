@@ -137,9 +137,21 @@ async function loadEntryData(container: HTMLElement, currentUser: UserSession, d
     }
 
     // Journal text content
-    const contentEl = el('div', { class: 'viewer-content' }, [
-      entry.content || '(No written content for this day)'
-    ]);
+    const isHtml = /<[a-z][\s\S]*>/i.test(entry.content || '');
+    const contentEl = el('div', {
+      class: `viewer-content ${isHtml ? 'rich-text' : 'plain-text'}`
+    });
+
+    if (entry.content) {
+      if (isHtml) {
+        contentEl.innerHTML = entry.content;
+      } else {
+        contentEl.textContent = entry.content;
+      }
+    } else {
+      contentEl.textContent = '(No written content for this day)';
+    }
+
     paper.appendChild(contentEl);
 
     container.appendChild(paper);

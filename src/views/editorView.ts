@@ -1,12 +1,13 @@
 import { el } from '../utils/dom';
 import { UserSession } from '../types';
 import { getEntry, saveDiaryEntry } from '../db/entries';
-import { uploadDoodleImage } from '../db/images';
+import { uploadDoodleImage, uploadInlineImage } from '../db/images';
 import { navigate } from '../router';
 import { createRetroWindow } from '../components/window';
 import { getTodayDateString } from '../utils/date';
 import { showRetroAlert } from '../components/modal';
-import { processAndCompressImage, validateImageFile } from '../utils/image';
+import { createPaintWindow } from '../components/paint';
+import { createRichEditor } from '../components/richEditor';
 
 export function renderEditorView(
   currentUser: UserSession,
@@ -62,100 +63,100 @@ export function renderEditorView(
   ]);
   form.appendChild(titleField);
 
-  // 3. Content Field
-  const contentTextarea = el('textarea', {
-    class: 'editor-textarea',
-    placeholder: 'Write your daily thoughts here...',
-    rows: 8,
-    required: true
+  // 3. Rich Document Content Field (WordPad Style)
+  const richEditor = createRichEditor({
+    initialContent: ''
   });
 
   const contentField = el('div', { class: 'editor-field' }, [
-    el('label', { class: 'editor-label' }, ['Journal Content:']),
-    contentTextarea
+    el('label', { class: 'editor-label' }, [
+      el('span', {}, ['Journal Document (WordPad):']),
+      el('span', { style: { fontWeight: 'normal', color: '#666', fontSize: '10px' } }, [
+        'Supports formatting, drag-and-drop images & inline drawings'
+      ])
+    ]),
+    richEditor.element
   ]);
   form.appendChild(contentField);
 
-  // 4. Doodle Upload Dropzone
-  let selectedFile: File | null = null;
+  // 4. Daily Doodle Workflow (Entry Icon / Primary Cover)
+  let doodleDataUrl: string | null = null;
   let existingImageUrl: string | undefined = undefined;
   let existingImagePath: string | undefined = undefined;
 
-  const previewContainer = el('div', { class: 'doodle-preview-container', style: { display: 'none' } });
-  const previewImg = el('img', { class: 'doodle-preview-image' });
-  const previewInfo = el('span', { style: { fontSize: '10px', color: 'var(--color-text-muted)', fontFamily: 'var(--font-mono)' } });
-  const removeImgBtn = el('button', {
+  const doodlePreviewContainer = el('div', {
+    class: 'doodle-preview-container',
+    style: { display: 'none' }
+  });
+  const doodlePreviewImg = el('img', { class: 'doodle-preview-image' });
+  const removeDoodleBtn = el('button', {
     type: 'button',
     class: 'bevel-button',
     style: { fontSize: '10px', padding: '2px 8px' },
-    onclick: (e: MouseEvent) => {
-      e.stopPropagation();
-      selectedFile = null;
+    onclick: () => {
+      doodleDataUrl = null;
       existingImageUrl = undefined;
       existingImagePath = undefined;
-      previewContainer.style.display = 'none';
-      dropPrompt.style.display = 'flex';
-      fileInput.value = '';
+      doodlePreviewContainer.style.display = 'none';
+      doodlePrompt.style.display = 'flex';
     }
   }, ['Remove Doodle']);
 
-  previewContainer.appendChild(previewImg);
-  previewContainer.appendChild(previewInfo);
-  previewContainer.appendChild(removeImgBtn);
+  doodlePreviewContainer.appendChild(doodlePreviewImg);
+  doodlePreviewContainer.appendChild(removeDoodleBtn);
 
-  const fileInput = el('input', {
-    type: 'file',
-    class: 'doodle-file-input',
-    accept: 'image/png, image/jpeg, image/webp, image/gif, image/svg+xml',
-    onchange: async (e: Event) => {
-      const files = (e.target as HTMLInputElement).files;
-      if (files && files[0]) {
-        await handleFileSelection(files[0]);
-      }
+  const openPaintBtn = el('button', {
+    type: 'button',
+    class: 'bevel-button',
+    style: { padding: '6px 12px' },
+    onclick: () => {
+      // Open Paint window
+      const paintWindow = createPaintWindow({
+        initialImage: doodleDataUrl || existingImageUrl,
+        onSave: (imageUrl: string) => {
+          doodleDataUrl = imageUrl;
+          doodlePreviewImg.src = imageUrl;
+          doodlePrompt.style.display = 'none';
+          doodlePreviewContainer.style.display = 'flex';
+          // Remove paint overlay
+          const overlay = document.querySelector('.paint-overlay');
+          if (overlay) {
+            overlay.remove();
+          }
+        },
+        onCancel: () => {
+          // Just remove paint overlay
+          const overlay = document.querySelector('.paint-overlay');
+          if (overlay) {
+            overlay.remove();
+          }
+        }
+      });
+      document.body.appendChild(paintWindow);
     }
-  });
+  }, ['🎨 Open Paint']);
 
-  const dropPrompt = el('div', {
+  const doodlePrompt = el('div', {
     style: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      gap: '6px'
+      gap: '8px',
+      padding: '12px',
+      border: '1px dashed #7f9db9',
+      background: '#f8f9fc',
+      borderRadius: '3px'
     }
   }, [
-    el('div', { style: { fontSize: '24px' } }, ['🎨']),
-    el('div', { style: { fontWeight: 'bold' } }, ['Drag & drop doodle image here']),
-    el('div', { style: { fontSize: '11px', color: 'var(--color-text-muted)' } }, ['or click to browse from disk (PNG, JPG, WEBP, SVG)'])
-  ]);
-
-  const dropzone = el('div', {
-    class: 'doodle-dropzone',
-    onclick: () => {
-      fileInput.click();
-    },
-    ondragover: (e: DragEvent) => {
-      e.preventDefault();
-      dropzone.classList.add('drag-over');
-    },
-    ondragleave: () => {
-      dropzone.classList.remove('drag-over');
-    },
-    ondrop: async (e: DragEvent) => {
-      e.preventDefault();
-      dropzone.classList.remove('drag-over');
-      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        await handleFileSelection(e.dataTransfer.files[0]);
-      }
-    }
-  }, [
-    fileInput,
-    dropPrompt,
-    previewContainer
+    el('div', { style: { fontSize: '20px' } }, ['🎨']),
+    el('div', { style: { fontWeight: 'bold', fontSize: '11px' } }, ['Daily Doodle Icon (Desktop Entry Cover)']),
+    openPaintBtn
   ]);
 
   const doodleField = el('div', { class: 'editor-field' }, [
-    el('label', { class: 'editor-label' }, ['Daily Doodle (Icon & Artwork):']),
-    dropzone
+    el('label', { class: 'editor-label' }, ['Daily Doodle Icon:']),
+    doodlePrompt,
+    doodlePreviewContainer
   ]);
   form.appendChild(doodleField);
 
@@ -201,46 +202,23 @@ export function renderEditorView(
     loadExistingEntry(targetDate);
   }
 
-  async function handleFileSelection(file: File) {
-    const validation = validateImageFile(file);
-    if (!validation.valid) {
-      await showRetroAlert('Invalid Image', validation.error || 'Please select a valid image file.', '⚠️');
-      return;
-    }
-
-    selectedFile = file;
-    dropPrompt.style.display = 'none';
-    previewContainer.style.display = 'flex';
-
-    // Show instant preview and compression estimate
-    try {
-      const processed = await processAndCompressImage(file);
-      previewImg.src = processed.dataUrl;
-      const originalKb = (file.size / 1024).toFixed(1);
-      const compressedKb = (processed.sizeBytes / 1024).toFixed(1);
-      previewInfo.textContent = `${file.name} (${processed.width}×${processed.height}px, optimized: ${compressedKb} KB from ${originalKb} KB)`;
-    } catch (err: any) {
-      console.warn('Failed preview compression:', err);
-      const url = URL.createObjectURL(file);
-      previewImg.src = url;
-      previewInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-    }
-  }
-
   async function loadExistingEntry(dateStr: string) {
     statusText.textContent = 'Loading existing entry...';
     try {
       const existing = await getEntry(dateStr);
       if (existing) {
         titleInput.value = existing.title || '';
-        contentTextarea.value = existing.content || '';
+        // If content is plain text with newlines, convert newlines for contenteditable
+        const rawContent = existing.content || '';
+        const isHtml = /<[a-z][\s\S]*>/i.test(rawContent);
+        richEditor.setContent(isHtml ? rawContent : rawContent.replace(/\n/g, '<br>'));
+
         if (existing.imageUrl) {
           existingImageUrl = existing.imageUrl;
           existingImagePath = existing.imagePath;
-          previewImg.src = existing.imageUrl;
-          previewInfo.textContent = 'Current attached doodle';
-          dropPrompt.style.display = 'none';
-          previewContainer.style.display = 'flex';
+          doodlePreviewImg.src = existing.imageUrl;
+          doodlePrompt.style.display = 'none';
+          doodlePreviewContainer.style.display = 'flex';
         }
       }
       statusText.textContent = '';
@@ -252,7 +230,7 @@ export function renderEditorView(
   async function handleSave() {
     const entryDate = dateInput.value.trim();
     const title = titleInput.value.trim();
-    const content = contentTextarea.value.trim();
+    const rawContentHtml = richEditor.getContent().trim();
 
     if (!entryDate) {
       await showRetroAlert('Missing Date', 'Please specify an entry date.', '⚠️');
@@ -266,9 +244,15 @@ export function renderEditorView(
       return;
     }
 
-    if (!content) {
-      await showRetroAlert('Missing Content', 'Please enter your journal content for today.', '⚠️');
-      contentTextarea.focus();
+    // Check if content has anything (text or image)
+    const tempCheck = document.createElement('div');
+    tempCheck.innerHTML = rawContentHtml;
+    const hasText = tempCheck.textContent?.trim().length;
+    const hasImages = tempCheck.querySelectorAll('img').length > 0;
+
+    if (!hasText && !hasImages) {
+      await showRetroAlert('Missing Content', 'Please enter your journal content or insert an image/drawing.', '⚠️');
+      richEditor.focus();
       return;
     }
 
@@ -280,12 +264,46 @@ export function renderEditorView(
       let uploadedUrl = existingImageUrl;
       let uploadedPath = existingImagePath;
 
-      if (selectedFile) {
-        progressContainer.style.display = 'block';
-        statusText.textContent = 'Optimizing & uploading doodle...';
+      // 1. Process inline images inside WordPad document
+      progressContainer.style.display = 'block';
+      statusText.textContent = 'Processing document images...';
+      progressFill.style.width = '15%';
 
-        const result = await uploadDoodleImage(selectedFile, entryDate, (pct) => {
-          progressFill.style.width = `${pct}%`;
+      const tempDoc = document.createElement('div');
+      tempDoc.innerHTML = rawContentHtml;
+
+      const inlineDataImages = Array.from(tempDoc.querySelectorAll('img[src^="data:"]'));
+      for (let i = 0; i < inlineDataImages.length; i++) {
+        const img = inlineDataImages[i] as HTMLImageElement;
+        const dataUrl = img.src;
+
+        statusText.textContent = `Uploading inline image ${i + 1} of ${inlineDataImages.length}...`;
+        const pct = Math.round(15 + ((i + 1) / (inlineDataImages.length + 1)) * 50);
+        progressFill.style.width = `${pct}%`;
+
+        // Convert Data URL to Blob
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
+        const permanentUrl = await uploadInlineImage(blob, entryDate, i);
+
+        // Update image src to permanent URL
+        img.src = permanentUrl;
+      }
+
+      const finalHtmlContent = tempDoc.innerHTML;
+
+      // 2. If a new Daily Doodle was drawn in Paint, upload it
+      if (doodleDataUrl) {
+        statusText.textContent = 'Uploading daily doodle cover...';
+        progressFill.style.width = '75%';
+
+        // Convert data URL to Blob/File
+        const response = await fetch(doodleDataUrl);
+        const blob = await response.blob();
+        const file = new File([blob], `doodle-${entryDate}.png`, { type: 'image/png' });
+
+        const result = await uploadDoodleImage(file, entryDate, (pct) => {
+          progressFill.style.width = `${75 + Math.round(pct * 0.2)}%`;
         });
 
         uploadedUrl = result.imageUrl;
@@ -293,8 +311,10 @@ export function renderEditorView(
       }
 
       statusText.textContent = 'Saving entry to disk...';
-      await saveDiaryEntry(entryDate, title, content, uploadedUrl, uploadedPath);
+      progressFill.style.width = '95%';
+      await saveDiaryEntry(entryDate, title, finalHtmlContent, uploadedUrl, uploadedPath);
 
+      progressFill.style.width = '100%';
       statusText.textContent = 'Saved successfully!';
       await showRetroAlert('Entry Saved', `Diary entry for ${entryDate} has been saved.`, '💾');
       navigate(`#/entry/${entryDate}`);
@@ -308,7 +328,7 @@ export function renderEditorView(
     }
   }
 
-  const windowTitle = isEditMode ? `Edit Entry — ${targetDate}` : 'New Diary Entry';
+  const windowTitle = isEditMode ? `Edit Document — ${targetDate}` : 'New Diary Document';
 
   const windowEl = createRetroWindow({
     title: windowTitle,
@@ -320,9 +340,9 @@ export function renderEditorView(
         navigate('#/');
       }
     },
-    width: '680px',
+    width: '740px',
     statusLeft: `Date: ${targetDate}`,
-    statusRight: 'Admin Mode'
+    statusRight: 'WordPad Mode'
   }, form);
 
   return windowEl;

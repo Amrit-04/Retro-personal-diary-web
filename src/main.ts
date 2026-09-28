@@ -7,6 +7,7 @@ import './styles/editor.css';
 import './styles/login.css';
 import './styles/taskbar.css';
 import './styles/modal.css';
+import './styles/paint.css';
 
 import { subscribeAuth } from './auth';
 import { subscribeRouter, getCurrentRoute, navigate, ParsedRoute } from './router';

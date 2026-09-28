@@ -1,11 +1,12 @@
 import { el } from '../utils/dom';
 
-export function showRetroAlert(title: string, message: string, icon = '⚠️'): Promise<void> {
+export function showRetroAlert(title: string, message: string, icon = 'ℹ️'): Promise<void> {
   return new Promise((resolve) => {
     const overlay = el('div', { class: 'modal-overlay' });
 
     const okBtn = el('button', {
       class: 'bevel-button',
+      style: { minWidth: '75px' },
       onclick: () => {
         document.body.removeChild(overlay);
         resolve();
@@ -20,7 +21,8 @@ export function showRetroAlert(title: string, message: string, icon = '⚠️'):
         ]),
         el('div', { class: 'window-controls' }, [
           el('button', {
-            class: 'window-btn',
+            class: 'window-btn-xp window-btn-close',
+            title: 'Close',
             onclick: () => {
               document.body.removeChild(overlay);
               resolve();
@@ -52,11 +54,13 @@ export function showRetroConfirm(title: string, message: string, icon = '❓'): 
 
     const okBtn = el('button', {
       class: 'bevel-button',
+      style: { minWidth: '75px' },
       onclick: () => cleanup(true)
     }, ['Yes']);
 
     const cancelBtn = el('button', {
       class: 'bevel-button',
+      style: { minWidth: '75px' },
       onclick: () => cleanup(false)
     }, ['Cancel']);
 
@@ -68,7 +72,8 @@ export function showRetroConfirm(title: string, message: string, icon = '❓'): 
         ]),
         el('div', { class: 'window-controls' }, [
           el('button', {
-            class: 'window-btn',
+            class: 'window-btn-xp window-btn-close',
+            title: 'Close',
             onclick: () => cleanup(false)
           }, ['✕'])
         ])

@@ -1,151 +1,315 @@
-/* Retro Taskbar at bottom */
+/* Windows XP Luna Taskbar */
 .taskbar {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: var(--taskbar-height);
-  background: var(--color-surface);
-  border-top: 2px solid var(--bevel-light);
+  background: linear-gradient(to bottom, #1f42b3 0%, #316ac5 3%, #235bd3 10%, #1f4fc6 30%, #1941a5 70%, #123485 100%);
+  border-top: 1px solid #4076f8;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2px 4px;
-  z-index: 50;
-  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  z-index: 200;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .taskbar-left {
   display: flex;
   align-items: center;
   gap: 6px;
+  height: 100%;
 }
 
-.start-button {
-  font-weight: bold;
-  font-size: 12px;
-  padding: 3px 8px;
+/* Iconic XP Green Curved Start Button */
+.xp-start-button {
+  background: linear-gradient(to bottom, #7ec354 0%, #52a829 10%, #388e1c 50%, #297412 85%, #1d5a0a 100%);
+  border: 1px solid #1a520a;
+  border-left: none;
+  border-radius: 0 14px 14px 0;
+  height: 100%;
+  padding: 0 14px 0 8px;
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 28px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: inset 0 1px 1px #a4e678, inset 0 -1px 2px #0f3605, 1px 0 3px rgba(0, 0, 0, 0.3);
+  transition: filter 0.1s ease;
 }
 
-.start-button-logo {
+.xp-start-button:hover {
+  filter: brightness(1.1);
+}
+
+.xp-start-button:active,
+.xp-start-button.active {
+  background: linear-gradient(to bottom, #1d5a0a 0%, #297412 20%, #388e1c 60%, #52a829 100%);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.6);
+  padding: 1px 13px 0 9px;
+}
+
+.xp-start-logo-svg {
+  width: 20px;
+  height: 20px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+}
+
+.xp-start-text {
+  color: #ffffff;
+  font-family: var(--font-retro);
   font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  letter-spacing: 0.5px;
+  text-shadow: 1px 1px 2px #0d3805, -1px -1px 0 #1a520a;
 }
 
+/* Taskbar Window Tabs */
 .taskbar-items {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-left: 4px;
+  margin-left: 6px;
+  height: 100%;
+  padding: 2px 0;
 }
 
 .taskbar-window-tab {
+  height: 24px;
+  max-width: 170px;
+  background: linear-gradient(to bottom, #3a79d8 0%, #2358b5 40%, #174291 100%);
+  border: 1px solid #133878;
+  border-radius: 3px;
+  color: #ffffff;
   padding: 2px 8px;
   font-size: 11px;
-  max-width: 160px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  height: 26px;
-}
-
-.taskbar-right {
   display: flex;
   align-items: center;
   gap: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  user-select: none;
+}
+
+.taskbar-window-tab:hover {
+  background: linear-gradient(to bottom, #4f8ee9 0%, #3168c4 40%, #204fa0 100%);
+}
+
+.taskbar-window-tab.active {
+  background: linear-gradient(to bottom, #183e85 0%, #1e4b9e 40%, #2458b5 100%);
+  border-color: #0b2454;
+  border-top: 2px solid #f29b18;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Taskbar System Tray */
+.taskbar-right {
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 .taskbar-tray {
-  border-top: 1px solid var(--bevel-shadow);
-  border-left: 1px solid var(--bevel-shadow);
-  border-right: 1px solid var(--bevel-light);
-  border-bottom: 1px solid var(--bevel-light);
-  padding: 2px 8px;
+  background: linear-gradient(to bottom, #0c52c6 0%, #125edd 40%, #0a47af 100%);
+  border-left: 1px solid #09378a;
+  border-top: 1px solid #1f6bee;
+  height: 100%;
+  padding: 0 10px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 11px;
-  font-family: var(--font-mono);
-  background: var(--color-surface);
-  height: 26px;
+  color: #ffffff;
+  box-shadow: inset 1px 0 2px rgba(0, 0, 0, 0.3);
 }
 
 .taskbar-user-badge {
-  font-size: 10px;
-  color: var(--color-titlebar);
-  font-weight: bold;
-  max-width: 120px;
+  font-size: 11px;
+  color: #e0edff;
+  max-width: 110px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .taskbar-admin-pill {
-  background: #ffff00;
-  color: #000000;
+  background: linear-gradient(to bottom, #fce488 0%, #f5af19 100%);
+  color: #5c3b00;
+  border: 1px solid #b37400;
   font-size: 9px;
-  padding: 0 3px;
-  border: 1px solid #000000;
-  border-radius: 2px;
   font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 2px;
 }
 
-/* Start Menu popup */
-.start-menu-popup {
+#taskbar-clock {
+  font-family: var(--font-retro);
+  font-size: 11px;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+/* Windows XP Two-Column Start Menu */
+.xp-start-menu {
   position: absolute;
   bottom: var(--taskbar-height);
-  left: 2px;
-  width: 220px;
-  background: var(--color-surface);
-  border-top: 2px solid var(--bevel-light);
-  border-left: 2px solid var(--bevel-light);
-  border-right: 2px solid var(--bevel-dark-shadow);
-  border-bottom: 2px solid var(--bevel-dark-shadow);
-  box-shadow: 2px -2px 6px rgba(0, 0, 0, 0.4);
+  left: 0;
+  width: 380px;
+  max-width: 95vw;
+  background: #ffffff;
+  border: 1px solid #003c74;
+  border-radius: 6px 6px 0 0;
+  box-shadow: 2px -4px 16px rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: column;
-  z-index: 150;
-  animation: windowPop 0.1s ease-out;
+  z-index: 300;
+  overflow: hidden;
+  animation: startMenuOpen 0.12s ease-out;
 }
 
-.start-menu-banner {
-  background: var(--color-titlebar);
-  color: var(--color-titlebar-text);
+@keyframes startMenuOpen {
+  0% { transform: translateY(10px) scale(0.98); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Start Menu User Header */
+.start-menu-header {
+  background: linear-gradient(to bottom, #0055ea 0%, #1e62cd 50%, #3e88eb 100%);
   padding: 8px 12px;
-  font-weight: bold;
-  font-size: 13px;
-  letter-spacing: 1px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
+  border-bottom: 2px solid #e59d00;
 }
 
-.start-menu-items {
+.start-menu-avatar {
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.start-menu-username {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px #000055;
+  letter-spacing: 0.3px;
+}
+
+/* Dual Column Body */
+.start-menu-body {
+  display: flex;
+  min-height: 280px;
+}
+
+.start-menu-left {
+  flex: 1.15;
+  background: #ffffff;
+  padding: 6px;
   display: flex;
   flex-direction: column;
-  padding: 4px 0;
+  gap: 4px;
 }
 
-.start-menu-item {
+.start-menu-right {
+  flex: 0.85;
+  background: #d3e5fa;
+  border-left: 1px solid #95bdee;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.start-menu-item-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
+  padding: 6px 8px;
   cursor: pointer;
-  font-size: 12px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  text-decoration: none;
 }
 
-.start-menu-item:hover {
-  background: var(--color-selection);
-  color: var(--color-selection-text);
+.start-menu-item-row:hover {
+  background: #316ac5;
+  color: #ffffff;
+}
+
+.start-menu-item-row:hover .start-menu-item-title {
+  color: #ffffff;
+}
+
+.start-menu-item-row:hover .start-menu-item-desc {
+  color: #e0edff;
+}
+
+.start-menu-item-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.start-menu-item-text {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.start-menu-item-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #000000;
+}
+
+.start-menu-right .start-menu-item-title {
+  font-size: 11px;
+  font-weight: normal;
+  color: #0c327d;
+}
+
+.start-menu-item-desc {
+  font-size: 10px;
+  color: #666666;
 }
 
 .start-menu-separator {
   height: 1px;
-  background: var(--bevel-shadow);
-  border-bottom: 1px solid var(--bevel-light);
-  margin: 4px 0;
+  background: #d4d0c8;
+  margin: 4px 6px;
+}
+
+/* Bottom Bar (Log Off & Shut Down) */
+.start-menu-footer {
+  background: linear-gradient(to bottom, #1f4fc6 0%, #1941a5 50%, #123485 100%);
+  border-top: 1px solid #4076f8;
+  padding: 6px 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.start-menu-footer-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+}
+
+.start-menu-footer-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
 }

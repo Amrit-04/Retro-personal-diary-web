@@ -60,6 +60,45 @@ export async function uploadDoodleImage(
 }
 
 /**
+ * Uploads an inline image (from rich text editor) to Firebase Storage under inline/ folder.
+ * Returns the download URL.
+ */
+export async function uploadInlineImage(
+  blobOrFile: Blob | File,
+  date: string,
+  index: number = 0
+): Promise<string> {
+  const extension = blobOrFile.type === 'image/webp' ? 'webp' : 'png';
+  const timestamp = Date.now();
+  const imagePath = `inline/${date}_${timestamp}_${index}.${extension}`;
+
+  if (!isConfigured) {
+    // Demo mode: create a data URL or object URL
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        mockStorageMap.set(imagePath, dataUrl);
+        resolve(dataUrl);
+      };
+      reader.readAsDataURL(blobOrFile);
+    });
+  }
+
+  const storageRef = ref(storage, imagePath);
+  const metadata = {
+    contentType: blobOrFile.type || 'image/png',
+    customMetadata: {
+      date,
+      type: 'inline_document_image',
+    },
+  };
+
+  await uploadBytes(storageRef, blobOrFile, metadata);
+  return await getDownloadURL(storageRef);
+}
+
+/**
  * Deletes an image from Firebase Storage if it exists.
  */
 export async function deleteDoodleImage(imagePath: string): Promise<void> {

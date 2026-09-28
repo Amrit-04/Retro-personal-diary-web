@@ -12,10 +12,10 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: var(--color-desktop);
+  background-color: #245edb;
   color: var(--color-text);
   font-family: var(--font-retro);
-  font-size: 13px;
+  font-size: 11px;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -29,80 +29,95 @@ html, body {
   overflow: hidden;
 }
 
-/* Retro Inset and Outset bevel classes */
-.bevel-outset {
-  background: var(--color-surface);
-  border-top: 2px solid var(--bevel-light);
-  border-left: 2px solid var(--bevel-light);
-  border-right: 2px solid var(--bevel-dark-shadow);
-  border-bottom: 2px solid var(--bevel-dark-shadow);
-  box-shadow: inset -1px -1px var(--bevel-shadow), inset 1px 1px var(--bevel-light);
-}
-
-.bevel-inset {
-  background: var(--color-white);
-  border-top: 2px solid var(--bevel-shadow);
-  border-left: 2px solid var(--bevel-shadow);
-  border-right: 2px solid var(--bevel-light);
-  border-bottom: 2px solid var(--bevel-light);
-  box-shadow: inset 1px 1px var(--bevel-dark-shadow);
-}
-
+/* Authentic Windows XP Button */
 .bevel-button {
-  background: var(--color-surface);
-  border-top: 2px solid var(--bevel-light);
-  border-left: 2px solid var(--bevel-light);
-  border-right: 2px solid var(--bevel-dark-shadow);
-  border-bottom: 2px solid var(--bevel-dark-shadow);
-  box-shadow: inset -1px -1px var(--bevel-shadow), inset 1px 1px var(--bevel-light);
   font-family: var(--font-retro);
-  font-size: 12px;
-  font-weight: bold;
-  padding: 4px 12px;
+  font-size: 11px;
+  color: #000000;
+  background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 60%, #d8d4c4 100%);
+  border: 1px solid #003c74;
+  border-radius: 3px;
+  padding: 3px 12px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
   outline: none;
+  box-shadow: inset 1px 1px 0px #ffffff, inset -1px -1px 0px #e0ded0, 0 1px 2px rgba(0, 0, 0, 0.15);
+  transition: all 0.05s ease;
+  min-height: 22px;
+}
+
+.bevel-button:hover {
+  background: linear-gradient(to bottom, #fdfdfd 0%, #fbe8c7 60%, #f7cf8a 100%);
+  border-color: #f7a934;
+  box-shadow: inset 1px 1px 0px #ffffff, 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .bevel-button:active,
 .bevel-button.active {
-  border-top: 2px solid var(--bevel-dark-shadow);
-  border-left: 2px solid var(--bevel-dark-shadow);
-  border-right: 2px solid var(--bevel-light);
-  border-bottom: 2px solid var(--bevel-light);
-  box-shadow: inset 1px 1px var(--bevel-shadow);
-  padding: 5px 11px 3px 13px;
+  background: linear-gradient(to bottom, #dcd7c6 0%, #ece9d8 40%, #ffffff 100%);
+  border-color: #003c74;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+  padding: 4px 11px 2px 13px;
 }
 
 .bevel-button:focus-visible {
-  outline: 1px dotted var(--color-black);
-  outline-offset: -4px;
+  outline: 1px dotted #000000;
+  outline-offset: -3px;
 }
 
 .bevel-button:disabled {
-  color: var(--color-surface-dark);
-  text-shadow: 1px 1px 0 var(--color-white);
+  color: #888888;
+  background: #ece9d8;
+  border-color: #aca899;
+  box-shadow: none;
   cursor: not-allowed;
 }
 
-/* Custom retro scrollbar */
+/* XP Inset Panel / Input Styling */
+.bevel-inset {
+  background: #ffffff;
+  border: 1px solid var(--xp-input-border);
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.15);
+}
+
+/* XP Outset Box */
+.bevel-outset {
+  background: var(--xp-surface);
+  border: 1px solid #ffffff;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+  box-shadow: 1px 1px 0px #000000;
+}
+
+/* Windows XP Scrollbar */
 ::-webkit-scrollbar {
   width: 16px;
   height: 16px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #dfdfdf;
-  border-left: 1px solid #808080;
+  background: #ece9d8;
+  border-left: 1px solid #d4d0c8;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
+  background: linear-gradient(to right, #ffffff 0%, #ece9d8 50%, #c4c0b4 100%);
+  border: 1px solid #003c74;
+  border-radius: 2px;
+  box-shadow: inset 1px 1px 0 #ffffff;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to right, #ffffff 0%, #f0ebdb 50%, #d8d4c4 100%);
+}
+
+::-webkit-scrollbar-button {
+  background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 100%);
+  border: 1px solid #003c74;
+  width: 16px;
+  height: 16px;
+  display: block;
 }

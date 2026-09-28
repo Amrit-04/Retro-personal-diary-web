@@ -3,11 +3,18 @@ import { UserSession } from '../types';
 import { getArchiveYears, getArchiveMonthsForYear, getEntriesForMonth } from '../db/entries';
 import { navigate } from '../router';
 import { createRetroWindow } from '../components/window';
-import { getFolderIconSvg, getDocumentIconSvg } from '../components/icons';
+import {
+  getFolderIconSvg,
+  getDocumentIconSvg,
+  getXpBackArrowSvg,
+  getXpUpArrowSvg,
+  getXpSearchSvg,
+  getXpFoldersIconSvg
+} from '../components/icons';
 import { MONTH_NAMES } from '../utils/date';
 
 export function renderExplorerView(
-  _currentUser: UserSession,
+  currentUser: UserSession,
   params: { year?: string; month?: string } = {}
 ): HTMLElement {
   const selectedYear = params.year ? parseInt(params.year, 10) : undefined;
@@ -15,13 +22,12 @@ export function renderExplorerView(
 
   const container = el('div', { class: 'explorer-container' });
 
-  // Toolbar with Back / Up / Path bar
+  // 1. Standard Buttons Toolbar
   const toolbar = el('div', { class: 'explorer-toolbar' });
 
-  const pathStr = buildPathString(selectedYear, selectedMonth);
-
-  const upBtn = el('button', {
-    class: 'bevel-button',
+  const backBtn = el('button', {
+    class: 'explorer-tool-btn',
+    title: 'Back',
     disabled: !selectedYear,
     onclick: () => {
       if (selectedMonth !== undefined) {
@@ -30,38 +36,182 @@ export function renderExplorerView(
         navigate('#/explorer');
       }
     }
-  }, ['⬆ Up']);
-
-  const pathBar = el('div', { class: 'explorer-path-bar' }, [
-    upBtn,
-    el('span', { class: 'explorer-path-label' }, ['Location:']),
-    el('input', {
-      type: 'text',
-      class: 'explorer-path-input',
-      readOnly: true,
-      value: pathStr
-    })
+  }, [
+    el('span', { innerHTML: getXpBackArrowSvg() }),
+    el('span', {}, ['Back'])
   ]);
 
-  toolbar.appendChild(pathBar);
+  const upBtn = el('button', {
+    class: 'explorer-tool-btn',
+    title: 'Up to Parent Folder',
+    disabled: !selectedYear,
+    onclick: () => {
+      if (selectedMonth !== undefined) {
+        navigate(`#/explorer/${selectedYear}`);
+      } else if (selectedYear !== undefined) {
+        navigate('#/explorer');
+      }
+    }
+  }, [
+    el('span', { innerHTML: getXpUpArrowSvg() }),
+    el('span', {}, ['Up'])
+  ]);
+
+  const searchBtn = el('button', {
+    class: 'explorer-tool-btn',
+    title: 'Search Diary',
+    onclick: () => {
+      // Focus or navigate to root
+      navigate('#/explorer');
+    }
+  }, [
+    el('span', { innerHTML: getXpSearchSvg() }),
+    el('span', {}, ['Search'])
+  ]);
+
+  const foldersBtn = el('button', {
+    class: 'explorer-tool-btn',
+    title: 'Folders Hierarchy',
+    onclick: () => navigate('#/explorer')
+  }, [
+    el('span', { innerHTML: getXpFoldersIconSvg() }),
+    el('span', {}, ['Folders'])
+  ]);
+
+  toolbar.appendChild(backBtn);
+  toolbar.appendChild(upBtn);
+  toolbar.appendChild(el('div', { class: 'explorer-tool-separator' }));
+  toolbar.appendChild(searchBtn);
+  toolbar.appendChild(foldersBtn);
   container.appendChild(toolbar);
 
-  // Content pane (grid of items)
+  // 2. XP Address Bar
+  const pathStr = buildPathString(selectedYear, selectedMonth);
+
+  const addressBar = el('div', { class: 'explorer-address-bar' }, [
+    el('span', { class: 'explorer-address-label' }, ['Address']),
+    el('div', { class: 'explorer-address-input-wrapper' }, [
+      el('span', { class: 'explorer-address-icon' }, ['📂']),
+      el('input', {
+        type: 'text',
+        class: 'explorer-address-input',
+        readOnly: true,
+        value: pathStr
+      })
+    ]),
+    el('button', {
+      class: 'explorer-go-btn',
+      onclick: () => {
+        // Reload or jump
+      }
+    }, [
+      el('span', { style: { color: '#2e7d32', fontSize: '11px' } }, ['➔']),
+      el('span', {}, ['Go'])
+    ])
+  ]);
+  container.appendChild(addressBar);
+
+  // 3. Two-Column Main Split (Left Task Pane + Right Content Pane)
+  const mainSplit = el('div', { class: 'explorer-main-split' });
+
+  // Left Task Pane (Accordion Blue Panels)
+  const taskPane = el('div', { class: 'explorer-task-pane' });
+
+  // Panel 1: Diary Tasks
+  const diaryTasksBox = el('div', { class: 'xp-task-box' }, [
+    el('div', { class: 'xp-task-box-header' }, [
+      el('span', {}, ['Diary Tasks']),
+      el('span', { style: { fontSize: '10px' } }, ['▲'])
+    ]),
+    el('div', { class: 'xp-task-box-body' }, [
+      currentUser.isAdmin ? el('div', {
+        class: 'xp-task-link',
+        onclick: () => navigate('#/new')
+      }, [
+        el('span', {}, ['✏️']),
+        el('span', {}, ['Write new diary entry'])
+      ]) : null,
+      el('div', {
+        class: 'xp-task-link',
+        onclick: () => navigate('#/')
+      }, [
+        el('span', {}, ['🖥️']),
+        el('span', {}, ['View recent 7-day files'])
+      ]),
+      el('div', {
+        class: 'xp-task-link',
+        onclick: () => navigate('#/explorer')
+      }, [
+        el('span', {}, ['📂']),
+        el('span', {}, ['Open archive root'])
+      ])
+    ].filter(Boolean) as HTMLElement[])
+  ]);
+  taskPane.appendChild(diaryTasksBox);
+
+  // Panel 2: Other Places
+  const otherPlacesBox = el('div', { class: 'xp-task-box' }, [
+    el('div', { class: 'xp-task-box-header' }, [
+      el('span', {}, ['Other Places']),
+      el('span', { style: { fontSize: '10px' } }, ['▲'])
+    ]),
+    el('div', { class: 'xp-task-box-body' }, [
+      el('div', {
+        class: 'xp-task-link',
+        onclick: () => navigate('#/')
+      }, [
+        el('span', {}, ['💻']),
+        el('span', {}, ['Desktop'])
+      ]),
+      el('div', {
+        class: 'xp-task-link',
+        onclick: () => navigate('#/explorer')
+      }, [
+        el('span', {}, ['📁']),
+        el('span', {}, ['My Diary Documents'])
+      ])
+    ])
+  ]);
+  taskPane.appendChild(otherPlacesBox);
+
+  // Panel 3: Details Panel
+  const detailsBox = el('div', { class: 'xp-task-box' }, [
+    el('div', { class: 'xp-task-box-header' }, [
+      el('span', {}, ['Details']),
+      el('span', { style: { fontSize: '10px' } }, ['▲'])
+    ]),
+    el('div', { class: 'xp-task-box-body' }, [
+      el('div', { class: 'xp-task-details-text' }, [
+        el('strong', {}, [getItemTypeLabel(selectedYear, selectedMonth)]),
+        el('br', {}),
+        el('span', { style: { color: '#666666', fontSize: '10px' } }, [
+          selectedMonth !== undefined ? 'Browsing logged diary entries.' : 'Select a folder to view contents.'
+        ])
+      ])
+    ])
+  ]);
+  taskPane.appendChild(detailsBox);
+
+  mainSplit.appendChild(taskPane);
+
+  // Right Content Pane (Grid of folders / files)
   const contentPane = el('div', { class: 'explorer-content-pane' });
   const grid = el('div', { class: 'explorer-grid' });
   contentPane.appendChild(grid);
-  container.appendChild(contentPane);
+  mainSplit.appendChild(contentPane);
+
+  container.appendChild(mainSplit);
 
   // Lazy loading state based on current depth
   loadExplorerLevel(grid, selectedYear, selectedMonth);
 
   const windowEl = createRetroWindow({
-    title: `File Explorer — ${pathStr}`,
+    title: `Diary Archive — ${pathStr}`,
     icon: '📂',
     onClose: () => navigate('#/'),
-    width: '780px',
+    width: '820px',
     statusLeft: `${getItemTypeLabel(selectedYear, selectedMonth)}`,
-    statusRight: 'Diary Archive'
+    statusRight: 'My Computer'
   }, container);
 
   return windowEl;
@@ -80,9 +230,9 @@ function buildPathString(year?: number, month?: number): string {
 }
 
 function getItemTypeLabel(year?: number, month?: number): string {
-  if (month !== undefined) return `Month View (${MONTH_NAMES[month - 1]} ${year})`;
-  if (year !== undefined) return `Year View (${year})`;
-  return 'Root Archive';
+  if (month !== undefined) return `${MONTH_NAMES[month - 1]} ${year}`;
+  if (year !== undefined) return `Year ${year}`;
+  return 'Diary Archive Root';
 }
 
 async function loadExplorerLevel(grid: HTMLElement, year?: number, month?: number) {
@@ -92,7 +242,7 @@ async function loadExplorerLevel(grid: HTMLElement, year?: number, month?: numbe
     class: 'explorer-empty-state'
   }, [
     el('div', { class: 'explorer-empty-icon' }, ['⏳']),
-    el('div', {}, ['Reading directory contents...'])
+    el('div', {}, ['Reading folder contents...'])
   ]);
   grid.appendChild(loading);
 
@@ -151,7 +301,7 @@ async function renderMonthsLevel(grid: HTMLElement, year: number) {
   if (months.length === 0) {
     grid.appendChild(el('div', { class: 'explorer-empty-state' }, [
       el('div', { class: 'explorer-empty-icon' }, ['📁']),
-      el('div', {}, [`No logged entries found in ${year}.`])
+      el('div', {}, [`No entries found in ${year}.`])
     ]));
     return;
   }
@@ -170,7 +320,7 @@ async function renderMonthsLevel(grid: HTMLElement, year: number) {
   }
 }
 
-// 3. Month Level: Entries (sorted chronologically)
+// 3. Month Level: Entries
 async function renderEntriesLevel(grid: HTMLElement, year: number, month: number) {
   const entries = await getEntriesForMonth(year, month);
   clearElement(grid);

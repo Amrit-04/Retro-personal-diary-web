@@ -22,7 +22,7 @@ async function loadDesktopContent(grid: HTMLElement, currentUser: UserSession) {
   // 1. System Icon: Diary Archive (File Explorer)
   const explorerIcon = el('div', {
     class: 'desktop-icon',
-    title: 'Open Diary Archive (File Explorer)',
+    title: 'Diary Archive (My Computer / Explorer)',
     onclick: () => navigate('#/explorer'),
   }, [
     el('div', { class: 'desktop-icon-img-wrapper', innerHTML: getFileExplorerIconSvg() }),
@@ -34,7 +34,7 @@ async function loadDesktopContent(grid: HTMLElement, currentUser: UserSession) {
   if (currentUser.isAdmin) {
     const newEntryIcon = el('div', {
       class: 'desktop-icon',
-      title: 'Create Today\'s Diary Entry',
+      title: 'New Entry (Admin Tool)',
       onclick: () => navigate('#/new'),
     }, [
       el('div', { class: 'desktop-icon-img-wrapper', innerHTML: getNewEntryIconSvg() }),
@@ -43,65 +43,16 @@ async function loadDesktopContent(grid: HTMLElement, currentUser: UserSession) {
     grid.appendChild(newEntryIcon);
   }
 
-  // 3. Section Header for Recent Entries (Last 7 Days)
-  const header = el('div', { class: 'desktop-section-header' }, ['Recent Entries (Last 7 Days)']);
-  grid.appendChild(header);
-
-  // Loading placeholder
-  const loadingIndicator = el('div', {
-    style: {
-      gridColumn: '1 / -1',
-      color: '#ffffff',
-      fontSize: '11px',
-      fontFamily: 'var(--font-mono)',
-      padding: '8px'
-    }
-  }, ['Scanning disk for recent entries...']);
-  grid.appendChild(loadingIndicator);
-
+  // 3. Load Recent Entries (Last 7 Days) directly onto Desktop without headers
   try {
-    // Only fetches the 7-day window (enforced by Firestore query)
     const recentEntries = await getRecentEntries();
 
-    if (grid.contains(loadingIndicator)) {
-      grid.removeChild(loadingIndicator);
-    }
-
-    if (recentEntries.length === 0) {
-      const emptyNote = el('div', {
-        style: {
-          gridColumn: '1 / -1',
-          color: 'rgba(255, 255, 255, 0.7)',
-          fontSize: '11px',
-          fontFamily: 'var(--font-mono)',
-          padding: '8px',
-          fontStyle: 'italic'
-        }
-      }, ['No diary entries logged in the past 7 days. Open File Explorer to view the complete archive.']);
-      grid.appendChild(emptyNote);
-      return;
-    }
-
-    // Render each entry as an icon.
-    // Important: Skip days with no entry. Do not create placeholder icons.
     for (const entry of recentEntries) {
       const entryIcon = createRecentEntryIcon(entry);
       grid.appendChild(entryIcon);
     }
   } catch (error: any) {
     console.error('Failed to load recent entries:', error);
-    if (grid.contains(loadingIndicator)) {
-      grid.removeChild(loadingIndicator);
-    }
-    const errorNote = el('div', {
-      style: {
-        gridColumn: '1 / -1',
-        color: '#ffaaaa',
-        fontSize: '11px',
-        padding: '8px'
-      }
-    }, [`Error loading entries: ${error.message || 'Unknown network error'}`]);
-    grid.appendChild(errorNote);
   }
 }
 
@@ -120,7 +71,7 @@ function createRecentEntryIcon(entry: DiaryEntry): HTMLElement {
     imgWrapper.innerHTML = getDocumentIconSvg();
   }
 
-  // Sanitize filename presentation: e.g. "today-at-the-lab.txt" or clean title
+  // Windows XP style filename: "building-the-retro.txt"
   const safeFilename = formatFilename(entry.title);
 
   const iconEl = el('div', {
@@ -140,5 +91,5 @@ function createRecentEntryIcon(entry: DiaryEntry): HTMLElement {
 function formatFilename(title: string): string {
   if (!title) return 'entry.txt';
   const clean = title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return `${clean.substring(0, 18)}.txt`;
+  return `${clean.substring(0, 20)}.txt`;
 }

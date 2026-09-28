@@ -1,4 +1,4 @@
-/* Retro Window Component Styling */
+/* Windows XP Luna Window System */
 .retro-window-overlay {
   position: absolute;
   top: 0;
@@ -14,36 +14,42 @@
 }
 
 .retro-window {
-  background: var(--color-surface);
-  border-top: 2px solid var(--bevel-light);
-  border-left: 2px solid var(--bevel-light);
-  border-right: 2px solid var(--bevel-dark-shadow);
-  border-bottom: 2px solid var(--bevel-dark-shadow);
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4), inset -1px -1px var(--bevel-shadow), inset 1px 1px var(--bevel-light);
+  background: var(--xp-surface);
+  border: 3px solid #0055ea;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   max-width: 95vw;
   max-height: calc(100vh - var(--taskbar-height) - 32px);
-  width: 720px;
-  animation: windowPop 0.15s ease-out;
+  width: 760px;
+  animation: xpWindowPop 0.12s ease-out;
+  overflow: hidden;
 }
 
-@keyframes windowPop {
-  0% { transform: scale(0.96); opacity: 0.8; }
+@keyframes xpWindowPop {
+  0% { transform: scale(0.97); opacity: 0.8; }
   100% { transform: scale(1); opacity: 1; }
 }
 
+/* Luna Blue Title Bar */
 .window-titlebar {
-  background: var(--color-titlebar);
-  color: var(--color-titlebar-text);
-  padding: 3px 4px 3px 6px;
+  background: linear-gradient(to bottom, #0058ee 0%, #3593ff 4%, #288eff 6%, #0060ff 8%, #003dd7 12%, #004fe8 90%, #0036ca 100%);
+  color: #ffffff;
+  padding: 4px 6px 4px 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-weight: bold;
   font-size: 12px;
+  font-family: var(--font-retro);
   letter-spacing: 0.3px;
+  text-shadow: 1px 1px 2px #00138c;
   user-select: none;
+  min-height: 28px;
 }
 
 .window-titlebar-left {
@@ -57,91 +63,131 @@
 
 .window-title-icon {
   font-size: 14px;
+  display: flex;
+  align-items: center;
 }
 
+.window-title-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* XP Window Control Buttons (Min, Max, Close) */
 .window-controls {
   display: flex;
   align-items: center;
   gap: 2px;
 }
 
-.window-btn {
-  background: var(--color-surface);
-  border-top: 1px solid var(--bevel-light);
-  border-left: 1px solid var(--bevel-light);
-  border-right: 1px solid var(--bevel-dark-shadow);
-  border-bottom: 1px solid var(--bevel-dark-shadow);
-  box-shadow: inset -1px -1px var(--bevel-shadow), inset 1px 1px var(--bevel-light);
-  width: 16px;
-  height: 14px;
-  font-size: 9px;
-  font-weight: bold;
+.window-btn-xp {
+  width: 21px;
+  height: 21px;
+  border-radius: 3px;
+  border: 1px solid #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--color-black);
+  font-family: var(--font-retro);
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 2px rgba(0, 0, 0, 0.3);
+  outline: none;
   padding: 0;
   line-height: 1;
 }
 
-.window-btn:active {
-  border-top: 1px solid var(--bevel-dark-shadow);
-  border-left: 1px solid var(--bevel-dark-shadow);
-  border-right: 1px solid var(--bevel-light);
-  border-bottom: 1px solid var(--bevel-light);
-  box-shadow: inset 1px 1px var(--bevel-shadow);
-  padding-top: 1px;
-  padding-left: 1px;
+/* Blue Minimize & Maximize Buttons */
+.window-btn-min,
+.window-btn-max {
+  background: linear-gradient(to bottom, #4a92f7 0%, #206fe8 45%, #0b51cb 75%, #053ca8 100%);
+  border-color: #ffffff;
 }
 
+.window-btn-min:hover,
+.window-btn-max:hover {
+  filter: brightness(1.15);
+}
+
+.window-btn-min:active,
+.window-btn-max:active {
+  background: linear-gradient(to bottom, #053ca8 0%, #0b51cb 45%, #206fe8 100%);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Red XP Close Button */
+.window-btn-close {
+  background: linear-gradient(to bottom, #f38686 0%, #e83f3f 40%, #c41818 70%, #9c0c0c 100%);
+  border-color: #ffffff;
+  margin-left: 2px;
+}
+
+.window-btn-close:hover {
+  filter: brightness(1.15);
+}
+
+.window-btn-close:active {
+  background: linear-gradient(to bottom, #9c0c0c 0%, #c41818 40%, #e83f3f 100%);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* XP Menu Bar */
 .window-menubar {
   display: flex;
-  gap: 12px;
-  padding: 3px 8px;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--bevel-shadow);
+  gap: 2px;
+  padding: 2px 4px;
+  background: var(--xp-surface);
+  border-bottom: 1px solid #aca899;
   font-size: 11px;
 }
 
 .window-menu-item {
   cursor: pointer;
-  padding: 1px 4px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  border: 1px solid transparent;
 }
 
 .window-menu-item:hover {
-  background: var(--color-selection);
-  color: var(--color-selection-text);
+  background: #316ac5;
+  color: #ffffff;
+  border-color: #1a4da0;
 }
 
+/* Window Body */
 .window-body {
-  padding: 10px;
+  padding: 8px;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   flex: 1;
-  background: var(--color-surface);
+  background: var(--xp-surface);
 }
 
+/* XP Status Bar */
 .window-statusbar {
-  background: var(--color-surface);
-  border-top: 1px solid var(--bevel-shadow);
-  padding: 3px 6px;
+  background: var(--xp-surface);
+  border-top: 1px solid #aca899;
+  padding: 2px 6px;
   font-size: 11px;
-  color: var(--color-text-muted);
+  color: #444444;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: 20px;
 }
 
 .statusbar-panel {
-  border-top: 1px solid var(--bevel-shadow);
-  border-left: 1px solid var(--bevel-shadow);
-  border-right: 1px solid var(--bevel-light);
-  border-bottom: 1px solid var(--bevel-light);
-  padding: 1px 6px;
-  background: var(--color-surface);
+  border-top: 1px solid #aca899;
+  border-left: 1px solid #aca899;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding: 1px 8px;
+  background: var(--xp-surface);
+  font-size: 11px;
 }
 
 @media (max-width: 600px) {
@@ -154,16 +200,11 @@
     max-width: 100vw;
     height: calc(100vh - var(--taskbar-height));
     max-height: calc(100vh - var(--taskbar-height));
-    border: none;
     border-radius: 0;
+    border: none;
   }
   .window-titlebar {
+    border-radius: 0;
     padding: 6px 8px;
-    font-size: 13px;
-  }
-  .window-btn {
-    width: 24px;
-    height: 20px;
-    font-size: 12px;
   }
 }
