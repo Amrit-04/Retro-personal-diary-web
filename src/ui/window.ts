@@ -128,6 +128,16 @@ export function openWindow(options: WindowContent & {
   });
   root.addEventListener('pointerdown', () => focusWindow(id));
 
+  // Escape closes a window the way Back does — except while a field has focus, where
+  // it would throw away words the author has not saved.
+  root.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('input, textarea, [contenteditable]')) return;
+    event.stopPropagation();
+    requestClose(managed);
+  });
+
   const managed: Managed = {
     id,
     title: options.title,

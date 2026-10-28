@@ -49,16 +49,6 @@ export function daysAgo(n: number): string {
   return toDateString(d);
 }
 
-/**
- * The document ids for the last `count` calendar days, newest first — the desktop's
- * icon row. `daysAgo(6)` is the inclusive lower bound of a 7-day window.
- */
-export function recentDayIds(count = 7): string[] {
-  const ids: string[] = [];
-  for (let i = 0; i < count; i++) ids.push(daysAgo(i));
-  return ids;
-}
-
 export function daysInMonth(year: number, month: number): number {
   // Day 0 of the next month is the last day of this one.
   return new Date(year, month, 0).getDate();
@@ -71,11 +61,6 @@ export function monthRange(year: number, month: number): { start: string; end: s
     start: `${year}-${padded}-01`,
     end: `${year}-${padded}-${String(daysInMonth(year, month)).padStart(2, '0')}`,
   };
-}
-
-/** First and last day ids of a year, for the archive range query. */
-export function yearRange(year: number): { start: string; end: string } {
-  return { start: `${year}-01-01`, end: `${year}-12-31` };
 }
 
 export function yearOf(dateId: string): number {

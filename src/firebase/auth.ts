@@ -38,46 +38,28 @@ const DEMO_SESSION: Session = {
   hasAdminClaim: true,
 };
 
-let session: Session | null = null;
 let ready: Promise<Session | null> | null = null;
-
-const listeners = new Set<(s: Session | null) => void>();
-
-export function currentSession(): Session | null {
-  return session;
-}
-
-export function onSessionChange(cb: (s: Session | null) => void): () => void {
-  listeners.add(cb);
-  return () => listeners.delete(cb);
-}
-
-function emit(next: Session | null): void {
-  session = next;
-  for (const cb of [...listeners]) cb(next);
-}
 
 /**
  * Resolves once Firebase has told us whether a session was restored. The boot
  * animation runs while this settles, so the login tile can already show an avatar.
+ *
+ * There is deliberately no change listener: the session is decided before the
+ * desktop mounts, and signing out reloads the page, so every screen keeps the one
+ * `Session` it was given.
  */
 export function authStateReady(): Promise<Session | null> {
   if (ready) return ready;
 
   if (!isLive) {
-    const stored = readDemo();
-    session = stored;
-    ready = Promise.resolve(stored);
+    ready = Promise.resolve(readDemo());
     return ready;
   }
 
   const auth = authInstance();
   ready = new Promise<Session | null>((resolve) => {
     onAuthStateChanged(auth, (user) => {
-      void finish(user).then((next) => {
-        emit(next);
-        resolve(next);
-      });
+      void finish(user).then(resolve);
     });
   });
 
@@ -105,7 +87,6 @@ function authInstance(): Auth {
 
 export async function signInWithGoogle(): Promise<Session | null> {
   if (!isLive) {
-    emit(DEMO_SESSION);
     writeDemo(DEMO_SESSION);
     return DEMO_SESSION;
   }
@@ -116,9 +97,7 @@ export async function signInWithGoogle(): Promise<Session | null> {
 
   try {
     const result = await signInWithPopup(auth, provider);
-    const next = await finish(result.user);
-    emit(next);
-    return next;
+    return await finish(result.user);
   } catch (error) {
     if (isPopupUnavailable(error)) {
       // Same-domain redirect: the only flow that survives mobile Safari.
@@ -131,20 +110,10 @@ export async function signInWithGoogle(): Promise<Session | null> {
 
 export async function signOut(): Promise<void> {
   if (!isLive) {
-    localStorage.removeItem(DEMO_KEY);
-    emit(null);
+    sessionStorage.removeItem(DEMO_KEY);
     return;
   }
   await fbSignOut(authInstance());
-  emit(null);
-}
-
-/** Forces a token refresh so a newly granted admin claim is picked up. */
-export async function refreshClaims(): Promise<void> {
-  if (!isLive || !session) return;
-  const user = authInstance().currentUser;
-  if (!user) return;
-  emit(await finish(user));
 }
 
 /** Turns Firebase error codes into a sentence a person can act on. */

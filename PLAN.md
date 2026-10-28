@@ -280,8 +280,31 @@ the real startup sound to replace the placeholder; Firebase project id for `.fir
 
 ## 12. Honest deviations to report at the end
 
-`getCount` instead of `getCountFromServer` (same capability, lite SDK). Rules tests likely not
-executable here (no Java). Lighthouse possibly not runnable headlessly. Content becomes plain text —
-any HTML written by the old rich editor is stripped for display and re-saved as text on edit.
-Single-tap open replaces the XP double-click on purpose. Demo adapter exists so the app is usable
-before Firebase config is supplied.
+1. **`getCount(query)` instead of `getCountFromServer`.** Firebase retired the latter; the lite SDK
+   exports the replacement with identical server-side counting. Using it keeps us on
+   `firebase/firestore/lite` rather than the much larger full SDK.
+2. **`uploadBytesResumable` progress via `task.on('state_changed')`.** This SDK version (10.14) has
+   no four-argument options overload, so the progress callback is wired through the task listener
+   instead. Same real byte counts, same resumable task.
+3. **Rules tests are written but not executed here.** `npm run test:rules` needs Java for the
+   emulator and this machine has none (`Could not spawn java -version`). The suite covers anon
+   denial, reader access, non-admin denial, malformed documents, immutable `createdAt`, upload
+   type/size/path limits and the claim itself; it needs one run on a machine with a JRE.
+4. **Content is plain text.** The viewer renders `pre-wrap` with no markdown. Any HTML left over
+   from the earlier rich-text version is displayed as literal characters and becomes plain text on
+   the next save.
+5. **Single tap opens an icon,** not XP's double-click: one gesture on touch, and the brief asks for
+   single-tap on mobile. Desktop keeps the same rule rather than having two.
+6. **A demo store exists** until Firebase config is supplied, so the app can be opened and tried.
+   It is a separate lazy chunk selected by one `isLive` check; nothing about it bypasses a rule.
+7. **Startup sound is synthesised** (`scripts/make-chime.mjs` → 17 KB mono MP3, inside the ~40 KB
+   budget) because no audio file was provided. Replace it with a personal one at
+   `public/startup.mp3`.
+8. **Desktop-width layout was verified by disabling the mobile overrides** in a 531 px viewport, not
+   on a genuinely wide screen; geometry at 1280 px and above has not been eyeballed.
+9. **Lighthouse SEO is 63 on purpose:** `public/robots.txt` says `Disallow: /` because a private
+   diary should not be crawled, which trips the `is-crawlable` audit. Performance, accessibility and
+   best practices are all 100 (mobile, simulated Fast 3G).
+10. **The entry stylesheet is preloaded rather than render-blocking**, which is what took
+    `render-blocking-resources` from 0 to 1; a cached-response guard in `main.ts` re-applies it so the
+    desktop can never come up unstyled.

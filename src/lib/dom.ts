@@ -85,10 +85,6 @@ export function replaceChildren(host: HTMLElement, ...children: Child[]): void {
   append(host, children);
 }
 
-export function clear(host: HTMLElement): void {
-  host.replaceChildren();
-}
-
 /** One listener per container: runs for the nearest ancestor matching `selector`. */
 export function delegate<K extends keyof HTMLElementEventMap>(
   root: HTMLElement,
@@ -110,16 +106,4 @@ export function delegate<K extends keyof HTMLElementEventMap>(
  */
 export function setText(node: HTMLElement, value: string): void {
   if (node.textContent !== value) node.textContent = value;
-}
-
-export function setVisible(node: HTMLElement, visible: boolean): void {
-  node.hidden = !visible;
-}
-
-export function show(node: HTMLElement): void {
-  node.classList.add('is-on');
-}
-
-export function hide(node: HTMLElement): void {
-  node.classList.remove('is-on');
 }

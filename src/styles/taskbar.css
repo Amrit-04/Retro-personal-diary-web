@@ -229,31 +229,31 @@
   border-color: #9aa7bd;
 }
 
-/* Thumb reach: a taller bar and larger controls on touch layouts. */
+/* Thumb reach: a taller bar and 44px controls on touch layouts. */
 @media (max-width: 767px) {
   :root {
-    --taskbar-height: 48px;
+    --taskbar-height: 52px;
   }
 
   .tb-start {
-    height: 40px;
+    height: 44px;
     padding: 0 14px 0 10px;
   }
 
   .taskbtn {
-    height: 40px;
+    height: 44px;
     flex-basis: 120px;
   }
 
   .tb-tray {
-    height: 40px;
+    height: 44px;
     gap: 4px;
     padding: 0 6px;
   }
 
   .tb-tray-btn {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
   }
 
   .start-menu {

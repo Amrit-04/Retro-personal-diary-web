@@ -35,6 +35,16 @@ const overlay = document.getElementById('boot');
 // A demo build has no Firebase config; login.ts says so on the tile.
 const demo = !import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
+/**
+ * The entry stylesheet is preloaded and swapped in on load so it cannot delay the
+ * boot paint. A cached response can in principle finish before the swap handler is
+ * attached, so the swap is repeated here: setting `rel` on a link whose bytes are
+ * already in hand applies them without another request.
+ */
+for (const link of document.querySelectorAll<HTMLLinkElement>('link[as="style"]')) {
+  if (link.rel !== 'stylesheet') link.rel = 'stylesheet';
+}
+
 void boot();
 
 async function boot(): Promise<void> {

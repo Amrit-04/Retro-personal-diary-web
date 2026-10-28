@@ -1,0 +1,4 @@
+# A private diary. Nothing here is meant to be indexed, which the hosting config
+# also states with an X-Robots-Tag header on every response.
+User-agent: *
+Disallow: /
