@@ -110,6 +110,50 @@
   text-shadow: none;
 }
 
+/* Marquee selection box */
+.desktop-selection-marquee {
+  position: absolute;
+  border: 1px dotted #316ac5;
+  background-color: rgba(49, 106, 197, 0.25);
+  z-index: 50;
+  pointer-events: none;
+}
+
+/* Context menu */
+.xp-context-menu {
+  position: fixed;
+  background: #ffffff;
+  border: 1px solid #716f64;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.35);
+  font-family: var(--font-retro);
+  font-size: 11px;
+  z-index: 9999;
+  padding: 2px;
+  min-width: 140px;
+  border-radius: 1px;
+}
+
+.xp-context-menu-item {
+  padding: 4px 18px 4px 20px;
+  cursor: pointer;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.xp-context-menu-item:hover {
+  background-color: #316ac5;
+  color: #ffffff;
+}
+
+.xp-context-menu-divider {
+  height: 1px;
+  background-color: #aca899;
+  margin: 3px 2px;
+}
+
 @media (max-width: 600px) {
   .desktop-container {
     padding: 12px 10px;

@@ -1,5 +1,7 @@
 import { el } from '../utils/dom';
 
+let nextZIndex = 101; // Start above the overlay's z-index (100)
+
 export interface WindowOptions {
   title: string;
   icon?: string;
@@ -69,10 +71,21 @@ export function createRetroWindow(
     class: 'retro-window',
     style: {
       width: options.width || '760px',
-      maxHeight: options.maxHeight || 'calc(100vh - var(--taskbar-height) - 32px)'
+      maxHeight: options.maxHeight || 'calc(100vh - var(--taskbar-height) - 32px)',
+      // Initial position: centered
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      zIndex: `${nextZIndex++}`
     },
-    onclick: (e: MouseEvent) => e.stopPropagation()
+    onclick: (e: MouseEvent) => {
+      e.stopPropagation();
+      bringToFront(windowContainer);
+    }
   });
+
+  // Make the window draggable via the titlebar
+  makeDraggable(titlebar, windowContainer);
 
   windowContainer.appendChild(titlebar);
 
@@ -119,4 +132,57 @@ export function createRetroWindow(
   });
 
   return overlay;
+}
+
+/**
+ * Makes a window draggable by its title bar.
+ */
+function makeDraggable(titlebar: HTMLElement, winEl: HTMLElement) {
+  let offsetX = 0;
+  let offsetY = 0;
+  let isDragging = false;
+
+  const startDrag = (e: MouseEvent) => {
+    isDragging = true;
+    // Get the window's current position
+    const rect = winEl.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    // Bring window to front when dragging starts
+    bringToFront(winEl);
+    // Prevent text selection
+    winEl.style.userSelect = 'none';
+    titlebar.style.userSelect = 'none';
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDrag);
+  };
+
+  const drag = (e: MouseEvent) => {
+    if (!isDragging) return;
+    const x = e.clientX - offsetX;
+    const y = e.clientY - offsetY;
+    // Constrain to viewport (optional, but keep window visible)
+    const maxX = window.innerWidth - winEl.offsetWidth;
+    const maxY = window.innerHeight - winEl.offsetHeight;
+    winEl.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+    winEl.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+    winEl.style.transform = 'none'; // Remove the centering transform
+  };
+
+  const stopDrag = () => {
+    isDragging = false;
+    winEl.style.userSelect = '';
+    titlebar.style.userSelect = '';
+    document.removeEventListener('mousemove', drag);
+    document.removeEventListener('mouseup', stopDrag);
+  };
+
+  titlebar.addEventListener('mousedown', startDrag);
+}
+
+/**
+ * Brings a window to the front by assigning the highest z-index.
+ */
+function bringToFront(winEl: HTMLElement) {
+  winEl.style.zIndex = `${nextZIndex++}`;
 }
