@@ -42,6 +42,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Component rules set display on buttons, bars and images, so the attribute alone
+   loses. One global rule keeps `hidden` meaningful everywhere. */
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   height: 100%;
@@ -120,6 +126,13 @@ button {
   color: #fff;
   background: linear-gradient(to bottom, #e06767 0%, #c41818 60%, #8f0f0f 100%);
   border-color: #7a0d0d;
+}
+
+/* Compact variant for inline notes and previews. */
+.btn-mini {
+  min-height: 30px;
+  padding: 2px 12px;
+  font-size: 12px;
 }
 
 /* Inset white panel, used by inputs and list backgrounds. */

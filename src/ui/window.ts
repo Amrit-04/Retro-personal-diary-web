@@ -38,8 +38,9 @@ interface Managed {
   title: string;
   root: HTMLElement;
   body: HTMLElement;
-  titleNode: HTMLElement;
   statusNode: HTMLElement | null;
+  /** Applies a new title everywhere it appears: bar, dialog label, close button, taskbar. */
+  retitle: (text: string) => void;
   onClose?: () => void;
 }
 
@@ -49,12 +50,32 @@ let nextId = 1;
 const stack: Managed[] = [];
 let onChange: () => void = () => undefined;
 let popstateArmed = false;
+let replacing = false;
+
+/* Window ids restart at 1 on every page load, so a history entry left behind by an
+   earlier visit (reload, Log Off, Restart) can name an id that belongs to this one.
+   Each load stamps its entries with its own token; a state from another load means
+   "no window of ours", which closes the whole stack instead of wedging it. */
+const NO_WINDOW = 0;
+const loadToken = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+function stamp(win: number): Record<string, unknown> {
+  return { win, loadToken };
+}
+
+function wantedWindow(): number {
+  const state = history.state as { win?: number; loadToken?: string } | null;
+  return state?.loadToken === loadToken ? (state.win ?? NO_WINDOW) : NO_WINDOW;
+}
 
 /** Called once when the desktop mounts, to hand the manager its two layers. */
 export function initWindows(windowsHost: HTMLElement, taskButtonsHost: HTMLElement, changed: () => void): void {
   host = windowsHost;
   buttonsHost = taskButtonsHost;
   onChange = changed;
+
+  // The entry we are sitting on is ours now, and it has no windows open.
+  history.replaceState(stamp(NO_WINDOW), '');
 
   if (!popstateArmed) {
     popstateArmed = true;
@@ -112,15 +133,27 @@ export function openWindow(options: WindowContent & {
     title: options.title,
     root,
     body: bodyHost,
-    titleNode,
     statusNode,
+    retitle: (text) => {
+      managed.title = text;
+      setText(titleNode, text);
+      root.setAttribute('aria-label', text);
+      closeButton.setAttribute('aria-label', `Close ${text}`);
+      syncButtons();
+    },
     onClose: options.onClose,
   };
   stack.push(managed);
   host.appendChild(root);
   restack();
 
-  history.pushState({ win: id }, '');
+  if (replacing) {
+    // This window takes a history slot instead of adding one.
+    history.replaceState(stamp(id), '');
+    replacing = false;
+  } else {
+    history.pushState(stamp(id), '');
+  }
   requestAnimationFrame(() => root.classList.add('is-open'));
   closeButton.focus({ preventScroll: true });
 
@@ -130,11 +163,7 @@ export function openWindow(options: WindowContent & {
     body: bodyHost,
     focus: () => focusWindow(id),
     close: () => requestClose(managed),
-    setTitle: (text) => {
-      managed.title = text;
-      setText(titleNode, text);
-      syncButtons();
-    },
+    setTitle: (text) => managed.retitle(text),
     setStatus: (text) => {
       if (managed.statusNode) setText(managed.statusNode, text);
     },
@@ -154,7 +183,7 @@ function requestClose(target: Managed): void {
 }
 
 function onPopState(): void {
-  const wanted = (history.state as { win?: number } | null)?.win;
+  const wanted = wantedWindow();
 
   while (stack.length && stack[stack.length - 1].id !== wanted) {
     const closing = stack.pop()!;
@@ -212,6 +241,31 @@ export function closeAllWindows(): void {
   if (stack.length) history.go(-stack.length);
 }
 
+/**
+ * Swaps an open window for another one in the same history slot.
+ *
+ * The viewer's Edit button uses this: the reader becomes the editor without
+ * stacking a window behind it, so Back from the editor still leaves the desktop.
+ * Closing by hand goes through history instead, never this shortcut.
+ */
+export async function replaceWindow(closing: WindowHandle, open: () => Promise<WindowHandle>): Promise<void> {
+  const managed = stack.find((item) => item.id === closing.id);
+
+  if (managed) {
+    stack.splice(stack.indexOf(managed), 1);
+    managed.root.remove();
+    managed.onClose?.();
+    restack();
+  }
+
+  replacing = true;
+  try {
+    await open();
+  } finally {
+    replacing = false;
+  }
+}
+
 export function openWindowCount(): number {
   return stack.length;
 }
@@ -230,4 +284,10 @@ export async function openEntryWindow(date: string, session: Session): Promise<W
 export async function openExplorerWindow(session: Session): Promise<WindowHandle> {
   const { buildExplorer } = await import('./explorer');
   return openWindow({ ...buildExplorer(session), kind: 'explorer' });
+}
+
+/** Admin only in practice: the rules refuse the write for anybody else. */
+export async function openEditorWindow(session: Session, date?: string): Promise<WindowHandle> {
+  const { buildEditor } = await import('./editor');
+  return openWindow({ ...buildEditor(session, date), kind: 'editor' });
 }

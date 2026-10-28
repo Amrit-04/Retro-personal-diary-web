@@ -12,6 +12,7 @@ import { fileName } from '../lib/slug';
 import { getEntry, type Entry } from '../firebase/entries';
 import { textFileIconSvg } from './icons';
 import { ask } from './dialog';
+import { openEditorWindow, replaceWindow } from './window';
 import type { WindowContent, WindowHandle } from './window';
 import type { Session } from '../firebase/auth';
 
@@ -31,10 +32,16 @@ export function buildViewer(date: string, session: Session): WindowContent {
     mounted: (handle) => {
       void load(handle, page, tools, date, session, (entry) => { current = entry; });
 
-      // Wired here because deleting needs the window handle to close itself.
+      // Wired here because both actions need the window handle they live in.
       tools.addEventListener('click', (event) => {
-        const target = (event.target as HTMLElement).closest('[data-act]') as HTMLElement | null;
-        if (target?.dataset.act === 'delete' && current) void confirmDelete(current, handle, tools);
+        const action = (event.target as HTMLElement).closest('[data-act]') as HTMLElement | null;
+        if (!action || !current) return;
+
+        if (action.dataset.act === 'delete') void confirmDelete(current, handle, tools);
+        else if (action.dataset.act === 'edit') {
+          // The reader becomes the editor: one window, one history slot.
+          void replaceWindow(handle, () => openEditorWindow(session, current!.date));
+        }
       });
     },
   };
@@ -87,6 +94,7 @@ async function load(
   // Visibility only — firestore.rules and storage.rules are the enforcement.
   if (session.hasAdminClaim) {
     replaceChildren(tools, [
+      h('button', { class: 'btn', type: 'button', dataset: { act: 'edit' } }, 'Edit'),
       h('button', { class: 'btn btn-danger', type: 'button', dataset: { act: 'delete' } }, 'Delete'),
     ]);
   }

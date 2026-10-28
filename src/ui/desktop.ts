@@ -8,15 +8,13 @@ import { h, replaceChildren, delegate } from '../lib/dom';
 import { fileName } from '../lib/slug';
 import { getRecentEntries, type Entry } from '../firebase/entries';
 import { explorerIconSvg, textFileIconSvg } from './icons';
-import { initWindows, openEntryWindow, openExplorerWindow, openWindowCount } from './window';
+import { initWindows, openEditorWindow, openEntryWindow, openExplorerWindow, openWindowCount } from './window';
 import { mountTaskbar } from './taskbar';
 import type { Session } from '../firebase/auth';
 
 export interface DesktopHandlers {
   onLogOff: () => void;
   onRestart: () => void;
-  /** Absent until the admin editor exists, so the Start menu never offers a dead item. */
-  onNewEntry?: () => void;
 }
 
 export function mountDesktop(app: HTMLElement, session: Session, handlers: DesktopHandlers): void {
@@ -27,8 +25,9 @@ export function mountDesktop(app: HTMLElement, session: Session, handlers: Deskt
     session,
     onLogOff: handlers.onLogOff,
     onRestart: handlers.onRestart,
-    onNewEntry: handlers.onNewEntry,
     onOpenExplorer: () => void openExplorerWindow(session),
+    // The claim decides whether the menu offers it; firestore.rules decides whether it works.
+    onNewEntry: session.hasAdminClaim ? () => void openEditorWindow(session) : undefined,
   });
 
   replaceChildren(app, [
