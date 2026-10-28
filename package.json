@@ -1,17 +1,23 @@
 {
-  "name": "retro-diary",
+  "name": "diary-xp",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc",
+    "size": "node scripts/measure-size.mjs",
+    "test:rules": "firebase emulators:exec --only firestore,storage --project demo-diary-xp \"node --test scripts/tests\""
   },
   "dependencies": {
     "firebase": "^10.14.0"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^3.0.4",
+    "firebase-admin": "^12.7.0",
+    "firebase-tools": "^13.35.1",
     "typescript": "^5.6.2",
     "vite": "^5.4.8"
   }

@@ -2,14 +2,255 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#008080" />
-    <meta name="description" content="A private personal diary presented through a retro desktop file system." />
-    <title>Retro Diary OS</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💾</text></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b3b8c" />
+    <meta name="color-scheme" content="light" />
+    <meta name="description" content="A private personal diary that boots like an old home computer." />
+    <meta name="referrer" content="no-referrer" />
+    <title>Diary XP</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <style>
+      /* ---- Critical CSS: everything needed to paint the boot screen. ---- */
+      :root {
+        --bios-fg: #e5e7eb;
+        --chrome: #1f5fbf;
+        --band-dark: #0b3b8c;
+        --band-light: #4f7fd0;
+        --welcome: #1f5fbf;
+        --desktop: #35689c;
+        --boot-mono: ui-monospace, "Lucida Console", Consolas, "Courier New", monospace;
+        --ui-font: Tahoma, Verdana, "Segoe UI", system-ui, -apple-system, sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+      }
+
+      body {
+        font-family: var(--ui-font);
+        font-size: 13px;
+        color: #111;
+        background: #000;
+        touch-action: manipulation;
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      #app {
+        position: fixed;
+        inset: 0;
+        background: var(--desktop);
+        opacity: 0;
+        transition: opacity 140ms linear;
+      }
+
+      #app.is-live { opacity: 1; }
+
+      /* ---- Boot overlay ---- */
+      #boot {
+        position: fixed;
+        inset: 0;
+        z-index: 9000;
+        background: #000;
+        color: var(--bios-fg);
+        font-family: var(--boot-mono);
+      }
+
+      #boot[hidden] { display: none; }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        display: none;
+      }
+
+      .screen.is-on { display: block; }
+
+      /* BIOS POST */
+      #bios {
+        margin: 0;
+        padding: 16px;
+        font: 13px/1.6 var(--boot-mono);
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: var(--bios-fg);
+      }
+
+      #bios .ok { color: #fff; }
+
+      #bios .caret {
+        display: inline-block;
+        width: 8px;
+        background: var(--bios-fg);
+        animation: blink 1s steps(1, start) infinite;
+      }
+
+      @keyframes blink { 50% { opacity: 0; } }
+
+      /* Splash */
+      #splash {
+        display: none;
+        inset: 0;
+        background: #000;
+        color: #dfe6f2;
+        text-align: center;
+      }
+
+      #splash.is-on { display: flex; }
+
+      .splash-inner {
+        margin: auto;
+        padding: 0 16px;
+      }
+
+      .wordmark {
+        font-family: var(--ui-font);
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: 6px;
+        color: #fff;
+      }
+
+      .wordmark span { color: #7fb2ff; }
+
+      .wordmark-sub {
+        margin-top: 6px;
+        font-family: var(--ui-font);
+        font-size: 11px;
+        letter-spacing: 2px;
+        color: #8fa3c8;
+      }
+
+      .bar {
+        width: 150px;
+        height: 20px;
+        margin: 46px auto 0;
+        padding: 2px 1px;
+        border: 2px solid #b2b2b2;
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .bar-blocks {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        gap: 3px;
+        animation: slide 2.2s linear infinite;
+      }
+
+      .bar-blocks i {
+        width: 9px;
+        height: 16px;
+        border-radius: 1px;
+        background: linear-gradient(to bottom, #2838c7, #5979ef 17%, #869ef3 32%, #869ef3 45%, #5979ef 59%, #2838c7);
+      }
+
+      @keyframes slide {
+        from { transform: translateX(-34px); }
+        to { transform: translateX(172px); }
+      }
+
+      .skip-hint {
+        position: absolute;
+        right: 16px;
+        bottom: calc(14px + env(safe-area-inset-bottom));
+        font-family: var(--ui-font);
+        font-size: 11px;
+        color: #6b7f9e;
+      }
+
+      /* Welcome */
+      #welcome {
+        background: var(--welcome);
+        color: #fff;
+        text-align: center;
+      }
+
+      #welcome.is-on { display: flex; }
+
+      #welcome p {
+        margin: auto;
+        font-family: var(--ui-font);
+        font-size: 3rem;
+        font-weight: 400;
+        letter-spacing: 2px;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        transition: opacity 600ms linear;
+      }
+
+      #welcome.is-faded p { opacity: 1; }
+
+      /* Static, instantly skippable boot when motion is reduced. */
+      @media (prefers-reduced-motion: reduce) {
+        #bios { display: none; }
+        .bar-blocks { animation: none; transform: translateX(60px); }
+        #welcome p { transition: none; opacity: 1; }
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        border: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      noscript p {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        padding: 24px;
+        background: #000;
+        color: #fff;
+        font-family: var(--ui-font);
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <main id="app" aria-label="Diary desktop"></main>
+
+    <div id="boot" role="status" aria-live="polite" aria-label="System boot">
+      <!-- 1. BIOS power-on self test -->
+      <pre id="bios" class="screen is-on"></pre>
+
+      <!-- 2. Splash with progress bar -->
+      <div id="splash" class="screen">
+        <div class="splash-inner">
+          <div class="wordmark">D<span>IARY</span></div>
+          <div class="wordmark-sub">PERSONAL JOURNAL SYSTEM</div>
+          <div class="bar" aria-hidden="true">
+            <div class="bar-blocks"><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <div class="skip-hint">Click, or press Esc, to skip</div>
+      </div>
+
+      <!-- 3. Welcome (startup sound plays here) -->
+      <div id="welcome" class="screen">
+        <p>welcome</p>
+      </div>
+    </div>
+
+    <noscript><p>This diary needs JavaScript enabled to boot.</p></noscript>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

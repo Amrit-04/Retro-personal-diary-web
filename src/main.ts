@@ -3,11 +3,9 @@ import './styles/window.css';
 import './styles/desktop.css';
 import './styles/explorer.css';
 import './styles/viewer.css';
-import './styles/editor.css';
 import './styles/login.css';
 import './styles/taskbar.css';
 import './styles/modal.css';
-import './styles/paint.css';
 
 import { subscribeAuth } from './auth';
 import { subscribeRouter, getCurrentRoute, navigate, ParsedRoute } from './router';
@@ -16,7 +14,6 @@ import { clearElement } from './utils/dom';
 import { renderDesktopView } from './views/desktopView';
 import { renderExplorerView } from './views/explorerView';
 import { renderViewerView } from './views/viewerView';
-import { renderEditorView } from './views/editorView';
 import { renderLoginView } from './views/loginView';
 import { renderTaskbar } from './components/taskbar';
 
@@ -55,12 +52,6 @@ function renderApp() {
     const viewerWindow = renderViewerView(currentUser, currentRoute.params.date);
     appRoot.appendChild(viewerWindow);
     activeWindowTitle = `📖 Entry: ${currentRoute.params.date}`;
-  } else if (currentRoute.name === 'editor') {
-    const editorWindow = renderEditorView(currentUser, currentRoute.params);
-    appRoot.appendChild(editorWindow);
-    activeWindowTitle = currentRoute.params.mode === 'edit'
-      ? `✏️ Edit: ${currentRoute.params.date}`
-      : '✏️ New Entry';
   }
 
   // 4. Taskbar Layer (always visible at bottom)

@@ -6,7 +6,6 @@ import { showRetroConfirm, showRetroAlert } from './modal';
 import {
   getXpStartLogoSvg,
   getFileExplorerIconSvg,
-  getNewEntryIconSvg,
   getDocumentIconSvg,
   getXpUserAvatarSvg,
   getXpLogOffIconSvg,
@@ -113,19 +112,6 @@ function renderStartMenu(currentUser: UserSession | null): HTMLElement {
       navigate('#/explorer');
     }
   }));
-
-  // New Entry (Admin Only)
-  if (currentUser?.isAdmin) {
-    leftCol.appendChild(createStartMenuItem({
-      iconSvg: getNewEntryIconSvg(),
-      title: 'New Entry.exe',
-      desc: 'Create or edit daily journal',
-      onClick: () => {
-        isStartMenuOpen = false;
-        navigate('#/new');
-      }
-    }));
-  }
 
   // Desktop
   leftCol.appendChild(createStartMenuItem({
@@ -253,7 +239,6 @@ function refreshTaskbarDom() {
     let title: string | undefined;
     if (route.name === 'explorer') title = 'Diary Archive';
     if (route.name === 'viewer') title = `Entry: ${route.params.date || ''}`;
-    if (route.name === 'editor') title = 'Diary Editor';
 
     const newTaskbar = renderTaskbar(currentUser, title);
     parent.replaceChild(newTaskbar, existingTaskbar);

@@ -3,7 +3,7 @@
  */
 
 export interface ParsedRoute {
-  name: 'desktop' | 'explorer' | 'viewer' | 'editor' | 'login';
+  name: 'desktop' | 'explorer' | 'viewer' | 'login';
   params: Record<string, string>;
   rawHash: string;
 }
@@ -27,14 +27,6 @@ export function parseHash(hash: string): ParsedRoute {
 
   if (root === 'entry' && p1) {
     return { name: 'viewer', params: { date: p1 }, rawHash: hash };
-  }
-
-  if (root === 'edit' && p1) {
-    return { name: 'editor', params: { date: p1, mode: 'edit' }, rawHash: hash };
-  }
-
-  if (root === 'new') {
-    return { name: 'editor', params: { mode: 'new' }, rawHash: hash };
   }
 
   if (root === 'explorer') {

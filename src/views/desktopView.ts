@@ -2,7 +2,7 @@ import { el, clearElement } from '../utils/dom';
 import { DiaryEntry, UserSession } from '../types';
 import { getRecentEntries } from '../db/entries';
 import { navigate } from '../router';
-import { getFileExplorerIconSvg, getNewEntryIconSvg, getDocumentIconSvg } from '../components/icons';
+import { getFileExplorerIconSvg, getDocumentIconSvg } from '../components/icons';
 import { formatFriendlyDate } from '../utils/date';
 
 export function renderDesktopView(currentUser: UserSession): HTMLElement {
@@ -41,20 +41,7 @@ async function loadDesktopContent(grid: HTMLElement, currentUser: UserSession, m
   ]);
   grid.appendChild(explorerIcon);
 
-  // 2. System Icon: New Entry (Admin Only)
-  if (currentUser.isAdmin) {
-    const newEntryIcon = el('div', {
-      class: 'desktop-icon',
-      title: 'New Entry (Admin Tool)',
-      onclick: () => navigate('#/new'),
-    }, [
-      el('div', { class: 'desktop-icon-img-wrapper', innerHTML: getNewEntryIconSvg() }),
-      el('div', { class: 'desktop-icon-label' }, ['New Entry.exe'])
-    ]);
-    grid.appendChild(newEntryIcon);
-  }
-
-  // 3. Load Recent Entries (Last 7 Days) directly onto Desktop without headers
+  // 2. Load Recent Entries (Last 7 Days) directly onto Desktop without headers
   try {
     const recentEntries = await getRecentEntries();
 

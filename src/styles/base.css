@@ -1,0 +1,204 @@
+/* Shared tokens, resets and controls. Inlined boot CSS lives in index.html and
+   must stay in sync with these colour values. */
+
+:root {
+  /* Chrome blue */
+  --chrome: #1f5fbf;
+  --chrome-dark: #0b3b8c;
+  --chrome-light: #4f7fd0;
+  --titlebar-1: #0058ee;
+  --titlebar-2: #3593ff;
+  --titlebar-3: #0036ca;
+  --titlebar-inactive: #7c9be7;
+  --frame: #0055ea;
+
+  /* Surfaces */
+  --surface: #ece9d8;
+  --surface-light: #ffffff;
+  --surface-dark: #aca899;
+  --desktop: #35689c;
+
+  /* Text */
+  --text: #111111;
+  --text-muted: #555555;
+  --text-inverted: #ffffff;
+
+  --selection: #316ac5;
+  --danger: #b3261e;
+  --ok: #2e7d32;
+
+  --font-ui: Tahoma, Verdana, "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "Lucida Console", Consolas, "Courier New", monospace;
+
+  --taskbar-height: 34px;
+  --radius-win: 6px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text);
+  user-select: none;
+  -webkit-user-select: none;
+  overscroll-behavior: none;
+}
+
+/* Text the user may want to copy: entry bodies and form fields. */
+.selectable,
+input,
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Classic beveled push button. */
+.btn {
+  min-height: 30px;
+  padding: 4px 14px;
+  font-size: 13px;
+  color: #000;
+  background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 60%, #d8d4c4 100%);
+  border: 1px solid #003c74;
+  border-radius: 3px;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #e0ded0, 0 1px 2px rgba(0, 0, 0, 0.15);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn:hover {
+  background: linear-gradient(to bottom, #fdfdfd 0%, #fbe8c7 60%, #f7cf8a 100%);
+  border-color: #f7a934;
+}
+
+.btn:active {
+  background: linear-gradient(to bottom, #dcd7c6 0%, #ece9d8 40%, #fff 100%);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.btn:disabled {
+  color: #8a8a8a;
+  background: #ece9d8;
+  border-color: var(--surface-dark);
+  box-shadow: none;
+  cursor: default;
+}
+
+.btn-primary {
+  min-height: 44px;
+  padding: 8px 20px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(to bottom, #3f8ee8 0%, #1f5fbf 60%, #14478f 100%);
+  border-color: #0b3b8c;
+}
+
+.btn-danger {
+  color: #fff;
+  background: linear-gradient(to bottom, #e06767 0%, #c41818 60%, #8f0f0f 100%);
+  border-color: #7a0d0d;
+}
+
+/* Inset white panel, used by inputs and list backgrounds. */
+.inset {
+  background: #fff;
+  border: 1px solid #7f9db9;
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.14);
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  /* 16px keeps iOS Safari from zooming on focus. */
+  font-size: 16px;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid #7f9db9;
+  border-radius: 2px;
+  padding: 8px 10px;
+}
+
+textarea {
+  line-height: 1.6;
+  resize: vertical;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #0b3b8c;
+  outline-offset: 1px;
+}
+
+.svg-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  display: block;
+}
+
+/* Line used by status messages: loading, empty, error. */
+.note {
+  padding: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.note strong {
+  color: var(--text);
+}
+
+.note-error {
+  color: var(--danger);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

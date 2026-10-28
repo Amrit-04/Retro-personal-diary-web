@@ -4,13 +4,23 @@ node_modules/
 # Production build output
 dist/
 
-# Environment and Secrets
+# Environment and secrets — never committed
 .env
 .env.local
 .env.*.local
 firebase/serviceAccountKey.json
+serviceAccount*.json
+*.p12
+*.pem
 
-# OS & Logs
+# Firebase CLI state
+.firebase/
+.firebase.data/
+firestore-debug.log
+ui-debug.log
+pubsub-debug.log
+
+# OS & logs
 .DS_Store
 Thumbs.db
 *.log

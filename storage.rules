@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+
+    // Uploads are named entries/{YYYY-MM-DD}/{timestamp}-display.webp and -thumb.webp.
+    function isDate(d) {
+      return d.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
+    function isAnImage() {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.size < 1 * 1024 * 1024;
+    }
+
+    match /entries/{date}/{fileName} {
+      allow read: if signedIn();
+
+      // request.resource == null means delete, which the editor uses to remove the
+      // previous display image and thumbnail after a successful replace.
+      allow write: if isAdmin() && isDate(date) && (request.resource == null || isAnImage());
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
