@@ -1,213 +1,201 @@
-/* Windows XP Logon / Welcome Screen Styling */
-.login-screen {
+/* Login screen: two tone bands, wordmark left, user tile right. */
+
+.login {
+  background: var(--band-dark);
+  color: #eaf1ff;
+}
+
+.login-inner {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(to bottom, #003399 0%, #002277 50%, #001155 100%);
-  display: flex;
-  flex-direction: column;
+  inset: clamp(56px, 12vh, 104px) 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  justify-content: space-between;
-  padding: 0;
-  z-index: 500;
-  user-select: none;
+  gap: 0;
+  background: var(--band-light);
+  border-top: 2px solid rgba(186, 215, 248, 0.85);
+  border-bottom: 2px solid rgba(248, 149, 61, 0.6);
 }
 
-/* XP Logon Top Blue Header Bar */
-.login-header-bar {
-  width: 100%;
-  height: 60px;
-  background: linear-gradient(to bottom, #001144 0%, #002266 100%);
-  border-bottom: 2px solid #e59d00;
-}
-
-/* Main Split Area (Left branding, Right user tiles) */
-.login-main-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 820px;
-  padding: 24px;
-  gap: 40px;
-  flex: 1;
-}
-
-/* Left Branding Side */
-.login-left-branding {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+.login-brand {
+  justify-self: end;
+  padding-right: clamp(20px, 5vw, 64px);
+  border-right: 2px solid rgba(186, 215, 248, 0.5);
   text-align: right;
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
-  padding-right: 40px;
 }
 
-.login-xp-logo {
-  display: flex;
+.brand-mark {
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 700;
+  letter-spacing: 8px;
+  color: #fff;
+  text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.35);
+}
+
+.brand-mark::first-letter {
+  color: #cfe2ff;
+}
+
+.brand-sub {
+  margin-top: 8px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #dbe7fb;
+}
+
+.login-side {
+  padding-left: clamp(20px, 5vw, 64px);
+  max-width: 380px;
+}
+
+.login-hint {
+  margin: 0 0 14px;
+  font-size: 15px;
+  color: #f2f7ff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.user-tile {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  min-width: 240px;
+  min-height: 76px;
+  padding: 10px 16px 10px 10px;
+  text-align: left;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 5px;
 }
 
-.login-xp-flag {
-  width: 44px;
-  height: 44px;
+.user-tile:hover,
+.user-tile:focus-visible {
+  background: linear-gradient(90deg, #113fa6, #194db8 40%, #587cdb);
+  border-color: #fdbd32;
 }
 
-.login-xp-title {
-  color: #ffffff;
-  font-size: 28px;
-  font-weight: bold;
-  font-family: var(--font-retro);
-  letter-spacing: -0.5px;
-  line-height: 1;
+.user-tile:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
-.login-xp-subtitle {
-  color: #f5af19;
-  font-size: 16px;
-  font-weight: bold;
-  font-style: italic;
-  margin-top: 2px;
+.user-avatar {
+  grid-row: span 2;
+  width: 56px;
+  height: 56px;
+  border: 2px solid #fff;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #7ba7d9;
 }
 
-.login-instructions {
-  color: #ffffff;
+.user-avatar img {
+  display: block;
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+}
+
+.avatar-fallback {
+  display: block;
+  line-height: 0;
+}
+
+.user-name {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.user-sub {
+  font-size: 12px;
+  color: #d5e4fb;
+}
+
+.login-error {
+  margin: 12px 0 0;
+  max-width: 320px;
+  padding: 8px 10px;
   font-size: 13px;
-  margin-top: 16px;
-  opacity: 0.85;
+  color: #fff;
+  background: #93261f;
+  border: 1px solid #ffb4ab;
+  border-radius: 3px;
 }
 
-/* Right User Account Tile */
-.login-right-tile {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.login-user-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  padding: 14px 18px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.login-user-card:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.login-user-avatar-frame {
-  border: 2px solid #ffffff;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-}
-
-.login-user-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.login-user-name {
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px #000000;
-}
-
-.login-user-role {
-  color: #a6cdfa;
-  font-size: 11px;
-}
-
-.login-google-btn-xp {
-  width: 100%;
-  padding: 8px 16px;
+.login-foot {
+  margin: 18px 0 0;
   font-size: 12px;
-  font-weight: bold;
-  background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 60%, #d8d4c4 100%);
-  border: 1px solid #003c74;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  box-shadow: inset 1px 1px 0 #ffffff, 0 2px 4px rgba(0, 0, 0, 0.25);
-  min-height: 32px;
+  color: #cfe0f8;
 }
 
-.login-google-btn-xp:hover {
-  background: linear-gradient(to bottom, #fdfdfd 0%, #fbe8c7 60%, #f7cf8a 100%);
-  border-color: #f7a934;
-}
-
-.login-google-logo {
-  width: 18px;
-  height: 18px;
-}
-
-.login-demo-notice {
-  background: rgba(255, 255, 224, 0.15);
-  border: 1px solid rgba(255, 255, 224, 0.3);
-  border-radius: 3px;
-  padding: 8px 12px;
-  font-size: 11px;
-  color: #ffffe0;
-  line-height: 1.4;
-}
-
-/* XP Logon Bottom Red / Turn Off Bar */
-.login-footer-bar {
-  width: 100%;
-  height: 60px;
-  background: linear-gradient(to bottom, #001144 0%, #000822 100%);
-  border-top: 2px solid #e59d00;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-}
-
-.login-turn-off-btn {
-  display: flex;
+.login-restart {
+  position: absolute;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #ffffff;
-  font-size: 12px;
-  cursor: pointer;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 14px;
+  color: #eaf1ff;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
 }
 
-.login-turn-off-btn:hover {
-  text-decoration: underline;
+.login-restart:hover,
+.login-restart:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
-@media (max-width: 680px) {
-  .login-main-container {
-    flex-direction: column;
-    gap: 20px;
-    padding: 16px;
+/* One column, tile centred, on phones. */
+@media (max-width: 720px) {
+  .login-inner {
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 26px;
+    inset: 40px 0;
+    padding: 24px 18px calc(24px + env(safe-area-inset-bottom));
   }
-  .login-left-branding {
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding-right: 0;
-    padding-bottom: 20px;
+
+  .login-brand {
+    justify-self: center;
+    text-align: center;
+    padding: 0;
+    border-right: 0;
+    border-bottom: 2px solid rgba(186, 215, 248, 0.45);
+    padding-bottom: 18px;
+    width: 100%;
+  }
+
+  .login-side {
+    padding: 0;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+  }
+
+  .login-hint {
     text-align: center;
   }
-  .login-right-tile {
+
+  .user-tile {
+    width: min(100%, 320px);
+  }
+
+  .login-error {
+    max-width: none;
     width: 100%;
+  }
+
+  .login-foot {
+    display: none;
   }
 }

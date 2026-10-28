@@ -1,303 +1,212 @@
-/* Windows XP Explorer / My Computer Styling */
-.explorer-container {
+/* File Explorer: toolbar, breadcrumb address bar, one scrolling list. */
+
+.explorer {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: 420px;
-  gap: 4px;
+  gap: 6px;
+  min-height: 100%;
 }
 
-/* XP Standard Buttons Toolbar */
-.explorer-toolbar {
+.ex-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--surface-dark);
+}
+
+.ex-nav {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--chrome-dark);
+  background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 70%, #ddd8c6 100%);
+  border: 1px solid #91a4bd;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 0 #fff;
+  flex: none;
+}
+
+.ex-nav:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #fdfdfd 0%, #fbe8c7 70%, #f7cf8a 100%);
+  border-color: #f7a934;
+}
+
+.ex-nav:disabled {
+  color: #a9a9a9;
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Breadcrumb address bar: every segment is a button. */
+.ex-trail {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 2px;
   padding: 3px 6px;
-  background: var(--xp-surface);
-  border-bottom: 1px solid #d4d0c8;
-  flex-wrap: wrap;
+  background: #fff;
+  border: 1px solid #7f9db9;
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.12);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
-.explorer-tool-btn {
+.ex-trail::-webkit-scrollbar {
+  display: none;
+}
+
+.ex-crumb {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--chrome);
+  white-space: nowrap;
+}
+
+.ex-crumb:hover {
+  background: #e6f0fb;
+  border-color: #b5cfe8;
+}
+
+.ex-crumb[aria-current='page'] {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.ex-sep {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.ex-list {
   display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/*
+ * Rows are laid out only when they approach the viewport, so a year with twelve
+ * months and a month with thirty-one entries both cost the same to open.
+ */
+.ex-row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 4px;
-  padding: 3px 6px;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 8px;
+  text-align: left;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 2px;
-  font-family: var(--font-retro);
-  font-size: 11px;
-  color: #000000;
-  cursor: pointer;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 44px;
 }
 
-.explorer-tool-btn:hover:not(:disabled) {
-  background: #ffffff;
-  border-color: #316ac5;
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+.ex-row:hover {
+  background: #eaf3ff;
+  border-color: #b5cfe8;
 }
 
-.explorer-tool-btn:active:not(:disabled) {
-  background: #e0edff;
-  border-color: #316ac5;
-}
-
-.explorer-tool-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.explorer-tool-separator {
-  width: 1px;
-  height: 20px;
-  background: #aca899;
-  margin: 0 4px;
-}
-
-/* XP Address Bar */
-.explorer-address-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 6px 4px;
-  background: var(--xp-surface);
-  border-bottom: 1px solid #aca899;
-  font-size: 11px;
-}
-
-.explorer-address-label {
-  color: #444444;
-  font-size: 11px;
-}
-
-.explorer-address-input-wrapper {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: #ffffff;
-  border: 1px solid var(--xp-input-border);
-  padding: 1px 4px;
-  height: 22px;
-  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.explorer-address-icon {
-  font-size: 12px;
-  margin-right: 4px;
-}
-
-.explorer-address-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-family: var(--font-retro);
-  font-size: 11px;
-  outline: none;
-  color: #000000;
-}
-
-.explorer-go-btn {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px 6px;
-  background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 100%);
-  border: 1px solid #7f9db9;
-  border-radius: 2px;
-  font-size: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  height: 22px;
-}
-
-.explorer-go-btn:hover {
-  background: #e0edff;
-  border-color: #316ac5;
-}
-
-/* Main Two-Column View Area */
-.explorer-main-split {
-  flex: 1;
-  display: flex;
-  background: #ffffff;
-  border: 1px solid var(--xp-input-border);
-  min-height: 300px;
-  overflow: hidden;
-}
-
-/* Left XP Task Pane (Blue Accordion Boxes) */
-.explorer-task-pane {
-  width: 210px;
-  background: linear-gradient(to bottom, #748dc7 0%, #6375d6 100%);
-  padding: 10px 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  overflow-y: auto;
-  border-right: 1px solid #5061b8;
-  flex-shrink: 0;
-}
-
-.xp-task-box {
-  background: #d3e5fa;
-  border-radius: 4px 4px 0 0;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-}
-
-.xp-task-box-header {
-  background: linear-gradient(to right, #215dc6 0%, #638ae6 100%);
-  color: #ffffff;
-  padding: 4px 8px;
-  font-size: 11px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  text-shadow: 1px 1px 1px #0c327d;
-  user-select: none;
-}
-
-.xp-task-box-body {
-  padding: 6px 8px;
-  background: #ffffff;
-  border: 1px solid #d3e5fa;
-  border-top: none;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.xp-task-link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #0c327d;
-  font-size: 11px;
-  text-decoration: none;
-  cursor: pointer;
-  padding: 2px 0;
-}
-
-.xp-task-link:hover {
-  text-decoration: underline;
-  color: #215dc6;
-}
-
-.xp-task-details-text {
-  font-size: 11px;
-  color: #333333;
-  line-height: 1.4;
-}
-
-/* Right Content Pane (Folder & File Grid) */
-.explorer-content-pane {
-  flex: 1;
-  background: #ffffff;
-  overflow-y: auto;
-  display: flex;
-}
-
-.explorer-grid {
-  width: 100%;
+.ex-cell-icon {
+  width: 32px;
+  height: 32px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 12px;
-  padding: 12px;
-  align-content: start;
+  place-items: center;
+  color: var(--chrome-dark);
 }
 
-.explorer-item {
+/* Only real thumbnails get the framed box; a glyph stands on its own. */
+.ex-thumb {
+  width: 32px;
+  height: 32px;
+  display: block;
+  object-fit: cover;
+  background: #fff;
+  border: 1px solid #c3cede;
+  border-radius: 2px;
+  flex: none;
+}
+
+.ex-cell-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.ex-cell-meta {
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.ex-note {
+  padding: 14px 8px;
+}
+
+/* Shimmer is an opacity pulse: cheap, and it animates nothing that lays out. */
+.ex-skeleton {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 6px 4px;
-  cursor: pointer;
-  border: 1px dotted transparent;
-  text-align: center;
-  border-radius: 2px;
-  user-select: none;
-  width: 100%;
-}
-
-.explorer-item:hover {
-  background: #e8f0fe;
-  border-color: #b0c8f8;
-}
-
-.explorer-item.selected,
-.explorer-item:active {
-  background: var(--xp-selection);
-  color: #ffffff;
-}
-
-.explorer-item-icon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 4px;
-}
-
-.explorer-item-img {
-  max-width: 40px;
-  max-height: 40px;
-  object-fit: contain;
-  border: 1px solid #7f9db9;
-  background: #ffffff;
-  border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.explorer-item-title {
-  font-size: 11px;
-  font-family: var(--font-retro);
-  word-break: break-word;
-  line-height: 1.25;
-}
-
-.explorer-item-date {
-  font-size: 10px;
-  color: #666666;
-  margin-top: 2px;
-}
-
-.explorer-item.selected .explorer-item-date {
-  color: #e0edff;
-}
-
-.explorer-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: #666666;
   gap: 8px;
-  padding: 32px;
+  padding: 10px 8px;
 }
 
-.explorer-empty-icon {
-  font-size: 32px;
-  opacity: 0.7;
+.ex-skel-row {
+  height: 26px;
+  background: #e2e6ee;
+  animation: ex-pulse 1.1s ease-in-out infinite;
 }
 
-@media (max-width: 700px) {
-  .explorer-task-pane {
-    display: none; /* Hide left task pane on mobile to give full screen to folders */
+.ex-skel-row:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.ex-skel-row:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes ex-pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ex-skel-row {
+    animation: none;
+    opacity: 0.7;
   }
-  .explorer-grid {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 8px;
-    padding: 8px;
+}
+
+@media (max-width: 767px) {
+  .ex-nav {
+    width: 44px;
+    height: 44px;
   }
-  .explorer-item-icon {
-    width: 36px;
-    height: 36px;
+
+  .ex-trail {
+    padding: 6px;
+    font-size: 14px;
+  }
+
+  .ex-crumb {
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+
+  .ex-cell-meta {
+    display: none;
+  }
+
+  .ex-row {
+    grid-template-columns: 32px minmax(0, 1fr);
   }
 }

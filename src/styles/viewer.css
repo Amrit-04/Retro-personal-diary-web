@@ -1,128 +1,143 @@
-/* Windows XP Diary Entry Viewer */
-.viewer-container {
+/* Entry viewer — a sheet of paper inside a text-editor window. */
+
+.viewer {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  height: 100%;
+  min-height: 100%;
 }
 
-.viewer-header {
-  border-bottom: 1px solid #aca899;
-  padding-bottom: 6px;
+.viewer-tools {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.viewer-title-area {
-  flex: 1;
-}
-
-.viewer-entry-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: #0c327d;
-  font-family: var(--font-retro);
-  margin-bottom: 2px;
-}
-
-.viewer-entry-date {
-  font-size: 11px;
-  color: #555555;
-  font-family: var(--font-retro);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.viewer-admin-actions {
-  display: flex;
+  justify-content: flex-end;
   gap: 6px;
+  min-height: 0;
 }
 
-/* XP Reading Paper */
-.viewer-paper {
+.viewer-tools:empty {
+  display: none;
+}
+
+/* The page: a readable measure, centred, white on the window's beige chrome. */
+.viewer-page {
   flex: 1;
-  background: #ffffff;
-  border: 1px solid var(--xp-input-border);
-  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
-  padding: 16px 20px;
-  overflow-y: auto;
+  width: 100%;
+  max-width: 68ch;
+  margin: 0 auto;
+  padding: 18px clamp(16px, 4vw, 34px) 40px;
+  background: #fff;
+  border: 1px solid var(--surface-dark);
+  box-shadow: inset 0 0 0 1px #fff;
+}
+
+.viewer-loading {
+  color: var(--text-muted);
+}
+
+.viewer-note {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
+  align-items: flex-start;
+  color: var(--text-muted);
 }
 
-.viewer-doodle-container {
+.viewer-note .note-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.entry-title {
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.entry-date {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.entry-figure {
+  margin: 16px 0;
+}
+
+/*
+ * The frame reserves the space a doodle will occupy before its bytes arrive, so
+ * scrolling into an image never jumps the text (CLS stays at zero).
+ */
+.doodle-frame {
   display: flex;
-  justify-content: center;
   align-items: center;
-  background: #f8f9fa;
-  padding: 10px;
-  border: 1px solid #d4d0c8;
-  border-radius: 3px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin: 0 auto;
-  max-width: 100%;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  max-height: 52vh;
+  overflow: hidden;
+  background: #f4f6fa;
+  border: 1px solid #c3cede;
 }
 
-.viewer-doodle-image {
-  max-width: 100%;
-  max-height: 380px;
+.doodle-frame.is-missing {
+  aspect-ratio: auto;
+  max-height: none;
+  padding: 18px;
+}
+
+.entry-doodle {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  border-radius: 2px;
   display: block;
 }
 
-.viewer-content {
-  font-family: var(--font-journal);
-  font-size: 14px;
+.entry-figure figcaption {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Plain text, exactly as typed: no markdown, no HTML, nothing parsed. */
+.entry-text {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 17px;
   line-height: 1.65;
-  color: #1a1a1a;
-  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
   user-select: text;
   -webkit-user-select: text;
 }
 
-.viewer-content.plain-text {
-  white-space: pre-wrap;
-}
-
-.viewer-content img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 2px;
-  margin: 8px 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  display: block;
-}
-
-.viewer-content ul,
-.viewer-content ol {
-  padding-left: 24px;
-  margin: 8px 0;
-}
-
-.viewer-content blockquote {
-  border-left: 3px solid #7f9db9;
-  margin: 8px 0;
-  padding-left: 12px;
-  color: #555555;
-  font-style: italic;
-}
-
-@media (max-width: 600px) {
-  .viewer-paper {
-    padding: 12px;
+@media (max-width: 767px) {
+  .viewer-page {
+    padding: 14px 16px 32px;
+    border-left: none;
+    border-right: none;
   }
-  .viewer-entry-title {
-    font-size: 15px;
+
+  .entry-text {
+    font-size: 16px;
   }
-  .viewer-content {
-    font-size: 13px;
+
+  .doodle-frame {
+    max-height: 40vh;
   }
-  .viewer-doodle-image {
-    max-height: 240px;
+
+  /* Tools sit under the text on a phone, where reaching the top means scrolling. */
+  .viewer {
+    flex-direction: column-reverse;
+  }
+
+  .viewer-tools {
+    justify-content: center;
+    padding-bottom: 8px;
+  }
+
+  .viewer-tools .btn {
+    min-height: 44px;
+    flex: 1;
   }
 }

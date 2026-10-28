@@ -27,3 +27,6 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
+
+# Scratch screenshots taken while checking the UI in a browser
+.qoder-shots/

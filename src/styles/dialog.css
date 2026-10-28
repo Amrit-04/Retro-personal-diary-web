@@ -1,0 +1,46 @@
+/* Modal question: a beveled box on a dimmed desktop. */
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.dialog {
+  width: min(380px, 100%);
+  padding: 14px 16px 16px;
+  background: var(--surface);
+  border: 2px solid var(--chrome-dark);
+  border-radius: 6px 6px 3px 3px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+}
+
+.dialog-title {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--chrome-dark);
+}
+
+.dialog-message {
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.dialog-actions .btn {
+  min-width: 92px;
+  min-height: 44px;
+}
