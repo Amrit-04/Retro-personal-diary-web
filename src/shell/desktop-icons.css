@@ -1,0 +1,115 @@
+/**
+ * Desktop icons: 70px cells, a 30px image, a two-line 10px label, and the Luna
+ * selection treatment. On a phone they become a 4-column grid that scrolls, which is
+ * the only place the desktop layout differs at all.
+ */
+@import '../styles/tokens.css';
+
+.desk-icons {
+  position: absolute;
+  top: var(--desktop-inset);
+  left: var(--desktop-inset);
+  bottom: calc(var(--taskbar-height) + 12px);
+  display: flex;
+  flex-flow: column wrap;
+  align-content: flex-start;
+  gap: var(--icon-gutter) 2px;
+  /* Icons keep their own paint layer: a window drag never repaints them. */
+  contain: layout paint;
+}
+
+.desk-icon {
+  width: var(--icon-width);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 2px;
+  border-radius: 3px;
+  color: #fff;
+  text-align: center;
+}
+
+.desk-icon:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.desk-icon-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-image);
+  height: var(--icon-image);
+}
+
+.desk-icon-image img {
+  width: var(--icon-image);
+  height: var(--icon-image);
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.desk-icon-label {
+  font-size: var(--size-icon-label);
+  line-height: 1.2;
+  max-height: 2.4em;
+  overflow: hidden;
+  text-shadow: 0 1px 1px #000;
+  /* Filenames have no spaces to break on. */
+  overflow-wrap: anywhere;
+}
+
+.desk-icon.is-selected .desk-icon-label {
+  background: var(--xp-selection);
+  color: var(--xp-selection-text);
+  outline: 1px dotted #ffff80;
+}
+
+.desk-icon.is-selected .desk-icon-image {
+  opacity: 0.5;
+  filter: drop-shadow(0 0 3px #40a0ff);
+}
+
+.desk-note {
+  margin: 0;
+  width: 168px;
+  height: 100%;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.desk-link {
+  color: #cfe4ff;
+  text-decoration: underline;
+  font-size: 11px;
+}
+
+@media (max-width: 767px) {
+  .desk-icons {
+    top: 10px;
+    left: 6px;
+    right: 6px;
+    bottom: calc(var(--taskbar-height) + 10px + env(safe-area-inset-bottom));
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 6px 2px;
+    align-content: start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .desk-icon {
+    /* 44px tap target minimum, met by the cell itself rather than the glyph. */
+    min-height: var(--touch-target);
+    justify-content: flex-start;
+  }
+
+  .desk-note {
+    grid-column: 1 / -1;
+    width: auto;
+    height: auto;
+    padding: 6px 4px;
+  }
+}

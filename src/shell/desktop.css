@@ -1,0 +1,52 @@
+/**
+ * Desktop surface. The wallpaper layer sits under everything and only ever changes
+ * opacity; the work area is the region above the taskbar that windows are positioned
+ * inside, so a maximized window or a phone sheet stops at the bar by construction.
+ */
+@import '../styles/tokens.css';
+
+.desk {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  animation: desk-in 150ms ease-out both;
+}
+
+@keyframes desk-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.xp-wallpaper {
+  z-index: 0;
+}
+
+.desk-area {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: calc(var(--taskbar-height) + env(safe-area-inset-bottom));
+  z-index: 1;
+}
+
+/* The drop target hint, shown only while a file is over the desktop. */
+.desk-offer {
+  position: absolute;
+  inset: 12px calc(12px + env(safe-area-inset-right)) calc(var(--taskbar-height) + 12px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));
+  z-index: 7000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  background: rgba(10, 84, 201, 0.35);
+  color: #fff;
+  font-size: 13px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}

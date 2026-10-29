@@ -1,0 +1,241 @@
+/**
+ * Start menu, from the measured Luna geometry: a 5px-radius blue frame, a 54px
+ * gradient header with the owner's picture, a white 190px program column, a light
+ * blue 190px shortcut column split by the 2px orange rule, and a 36px footer band.
+ *
+ * On a phone it becomes full-width, the columns stack, and every row grows to 44px.
+ */
+@import '../styles/tokens.css';
+
+.sm {
+  position: absolute;
+  left: 0;
+  bottom: calc(var(--taskbar-height) + env(safe-area-inset-bottom));
+  z-index: 8500;
+  width: var(--startmenu-width);
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 3px solid var(--xp-blue-frame);
+  border-bottom: 0;
+  border-radius: var(--startmenu-radius) var(--startmenu-radius) 0 0;
+  background: var(--xp-menu-side);
+  box-shadow: 3px 3px 14px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  color: var(--xp-face-text);
+}
+
+/* ---- Header band ---- */
+.sm-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: var(--startmenu-header-height);
+  padding: 0 10px;
+  background: var(--grad-startmenu-header);
+  color: #fff;
+  flex: none;
+}
+
+/* The 3px sheen across the top of the header. */
+.sm-head::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0));
+}
+
+.sm-avatar {
+  width: 42px;
+  height: 42px;
+  border: 2px solid #ddd;
+  border-radius: 3px;
+  background: #cbe3ff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.sm-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sm-name {
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sm-mark {
+  margin-left: auto;
+  opacity: 0.9;
+}
+
+/* ---- Two columns ---- */
+.sm-body {
+  display: flex;
+  background: var(--xp-menu-face);
+  min-height: 0;
+}
+
+.sm-left {
+  width: var(--startmenu-column);
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  background: var(--xp-menu-face);
+  border-right: 1px solid #a7c5ea;
+}
+
+.sm-right {
+  width: var(--startmenu-column);
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  background: var(--xp-menu-side);
+}
+
+/* The orange rule that separates the header from the columns. */
+.sm-sep {
+  display: block;
+  height: 2px;
+  margin: 4px 6px;
+  background: var(--startmenu-rule);
+}
+
+.sm-sep--left {
+  height: 7.5px;
+  background: var(--startmenu-separator);
+}
+
+.sm-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--startmenu-item-height);
+  padding: 0 8px;
+  text-align: left;
+  color: var(--xp-face-text);
+  font-size: 11px;
+}
+
+.sm-item span {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sm-item--side {
+  height: var(--startmenu-item-height-side);
+  color: var(--xp-menu-side-text);
+}
+
+.sm-item:hover,
+.sm-item:focus-visible {
+  background: var(--xp-menu-hover);
+  color: #fff;
+  border-radius: 3px;
+}
+
+.sm-thumb {
+  width: 22px;
+  height: 22px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex: none;
+}
+
+.sm-left > .sm-item > :first-child {
+  width: 30px;
+  height: 30px;
+  flex: none;
+}
+
+.sm-hint {
+  margin: 6px 10px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: #5b6b80;
+}
+
+.sm-hint--side {
+  color: #33507d;
+}
+
+/* ---- Footer band ---- */
+.sm-foot {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 18px;
+  min-height: var(--startmenu-footer-height);
+  padding: 0 12px;
+  background: var(--grad-startmenu-footer);
+  color: #fff;
+  flex: none;
+}
+
+.sm-foot-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.45);
+}
+
+.sm-foot-item:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 767px) {
+  .sm {
+    width: 100%;
+    border-radius: var(--startmenu-radius) var(--startmenu-radius) 0 0;
+    max-height: calc(100dvh - var(--taskbar-height));
+    overflow-y: auto;
+  }
+
+  .sm-body {
+    flex-direction: column;
+  }
+
+  .sm-left,
+  .sm-right {
+    width: auto;
+  }
+
+  .sm-left {
+    border-right: 0;
+  }
+
+  .sm-item {
+    min-height: var(--touch-target);
+    font-size: 13px;
+  }
+
+  .sm-item--side {
+    min-height: var(--touch-target);
+    font-size: 12px;
+  }
+
+  .sm-foot {
+    justify-content: space-between;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

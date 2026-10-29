@@ -1,0 +1,101 @@
+/**
+ * Reading layout: one column of plain text, 17px with a 1.6 leading, capped at 65
+ * characters so a wide window never turns into a wall of type. The image is lazy and
+ * carries dimensions from the pipeline's 800px long edge so the text below it does not
+ * jump when it lands.
+ */
+@import '../../styles/tokens.css';
+
+.viewer {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  background: var(--xp-face);
+}
+
+.viewer-scroll {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 18px 26px;
+}
+
+.viewer-title {
+  margin: 0 0 2px;
+  font-family: var(--font-title);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.viewer-date {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d8dce3;
+  font-size: 11px;
+  color: #5b6b80;
+}
+
+.viewer-photo {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 0 14px;
+  border: 1px solid #c3ccd9;
+  border-radius: 2px;
+  background: #f2f5f9;
+}
+
+.viewer-text {
+  max-width: 65ch;
+  font-size: 17px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.viewer-loading,
+.viewer-missing {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px 18px;
+  text-align: center;
+  font-size: 12px;
+  color: #33415a;
+}
+
+.viewer-loading-bar {
+  width: 120px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #cfe0f7, #6f9be0, #cfe0f7);
+  animation: viewer-load 1.1s linear infinite;
+}
+
+@keyframes viewer-load {
+  from {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.35;
+  }
+}
+
+@media (max-width: 767px) {
+  .viewer-scroll {
+    padding: 12px 14px 26px;
+  }
+
+  .viewer-text {
+    font-size: 16px;
+  }
+}

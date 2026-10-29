@@ -1,0 +1,340 @@
+/**
+ * Luna window chrome, at the measurements recorded in tokens.css: a 3px blue frame,
+ * a 28px title band that reaches the window edges, 22px caption buttons, and eight
+ * resize handles whose hit area is wider than the visible edge.
+ */
+@import '../styles/tokens.css';
+
+.win {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  padding: var(--window-frame-pad);
+  padding-top: 0;
+  background: var(--xp-blue-frame);
+  border-radius: var(--window-radius-top) var(--window-radius-top) 0 0;
+  box-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+  color: var(--xp-face-text);
+  overflow: visible;
+}
+
+.win.is-blurred {
+  background: var(--xp-blue-frame-blurred);
+}
+
+/* Only ever present between pointerdown and pointerup. */
+.win.is-busy {
+  will-change: transform, width, height;
+}
+
+.win.is-maximized {
+  left: 0 !important;
+  top: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  right: 0;
+  bottom: 0;
+  border-radius: 0;
+}
+
+/* ---- Title band ---- */
+.win-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: var(--titlebar-band);
+  margin: 0 calc(var(--window-frame-pad) * -1);
+  padding: 0 3px 0 7px;
+  border-radius: var(--window-radius-top) var(--window-radius-top) 0 0;
+  background: var(--grad-title-active);
+  color: #fff;
+  font-family: var(--font-title);
+  font-size: var(--size-title);
+  font-weight: 700;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.6);
+  cursor: default;
+  flex: none;
+  /* Touch dragging the title of a sheet must not scroll the page behind it. */
+  touch-action: none;
+}
+
+.win.is-blurred .win-head {
+  background: var(--grad-title-inactive);
+}
+
+/* The two rounded glows at the ends of the band. */
+.win-head::before,
+.win-head::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 15px;
+  pointer-events: none;
+}
+
+.win-head::before {
+  left: 0;
+  border-radius: var(--window-radius-top) 0 0 0;
+  background: linear-gradient(to right, #1638e6, rgba(22, 56, 230, 0));
+  opacity: 0.35;
+}
+
+.win-head::after {
+  right: 0;
+  border-radius: 0 var(--window-radius-top) 0 0;
+  background: linear-gradient(to left, #1638e6, rgba(22, 56, 230, 0));
+  opacity: 0.35;
+}
+
+.win.is-active .win-head::before,
+.win.is-active .win-head::after {
+  opacity: 1;
+}
+
+.win-icon {
+  display: flex;
+  align-items: center;
+  flex: none;
+  margin-top: -2px;
+}
+
+.win-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-right: 6px;
+}
+
+/* ---- Caption buttons ---- */
+.win-captions {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex: none;
+}
+
+.caption {
+  position: relative;
+  width: var(--caption-size);
+  height: var(--caption-size);
+  border: 1px solid #fff;
+  border-radius: 3px;
+  background: var(--grad-cap-blue);
+  box-shadow: var(--shadow-cap-blue);
+  flex: none;
+}
+
+.caption:hover {
+  filter: brightness(120%);
+}
+
+.caption:active {
+  filter: brightness(90%);
+}
+
+.caption--close {
+  margin-left: 3px;
+  background: var(--grad-cap-red);
+  box-shadow: var(--shadow-cap-red);
+}
+
+.win.is-blurred .caption {
+  background: linear-gradient(to bottom, #b8c6e4, #7f8fae);
+  box-shadow: inset 0 -1px 2px 1px #6f7f9e;
+  filter: saturate(0.4);
+}
+
+/* Glyphs, drawn rather than shipped as images. */
+.caption--min::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  width: 9px;
+  height: 3px;
+  background: #fff;
+}
+
+.caption--max::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  width: 11px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-top-width: 3px;
+  box-sizing: border-box;
+}
+
+.caption--close::before,
+.caption--close::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 10px;
+  width: 13px;
+  height: 2px;
+  background: #fff;
+  border-radius: 1px;
+}
+
+.caption--close::before {
+  transform: rotate(45deg);
+}
+
+.caption--close::after {
+  transform: rotate(-45deg);
+}
+
+/* ---- Client area ---- */
+.win-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  background: var(--xp-face);
+  overflow: hidden;
+  contain: layout paint;
+}
+
+.win-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.win-loading-bar {
+  width: 120px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #cfe0f7, #6f9be0, #cfe0f7);
+  animation: win-load 1.1s linear infinite;
+}
+
+@keyframes win-load {
+  from {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.35;
+  }
+}
+
+/* ---- Resize handles: 3px visible edge, 9px hit area ---- */
+.rz {
+  position: absolute;
+  z-index: 2;
+  touch-action: none;
+}
+
+.rz-n,
+.rz-s {
+  left: 12px;
+  right: 12px;
+  height: 9px;
+  cursor: ns-resize;
+}
+
+.rz-e,
+.rz-w {
+  top: 12px;
+  bottom: 12px;
+  width: 9px;
+  cursor: ew-resize;
+}
+
+.rz-n {
+  top: -4px;
+}
+
+.rz-s {
+  bottom: -3px;
+}
+
+.rz-e {
+  right: -4px;
+}
+
+.rz-w {
+  left: -4px;
+}
+
+.rz-ne,
+.rz-nw,
+.rz-se,
+.rz-sw {
+  width: 14px;
+  height: 14px;
+  cursor: nwse-resize;
+}
+
+.rz-nw {
+  left: -4px;
+  top: -4px;
+  cursor: nwse-resize;
+}
+
+.rz-ne {
+  right: -4px;
+  top: -4px;
+  cursor: nesw-resize;
+}
+
+.rz-sw {
+  left: -4px;
+  bottom: -3px;
+  cursor: nesw-resize;
+}
+
+.rz-se {
+  right: -4px;
+  bottom: -3px;
+  cursor: nwse-resize;
+}
+
+/* ---- Phones: a sheet, not a window ---- */
+.win.is-sheet {
+  left: 0 !important;
+  top: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  right: 0;
+  bottom: 0;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--xp-blue-frame);
+}
+
+.win.is-sheet .win-head {
+  height: var(--mobile-titlebar-height);
+  margin: 0;
+  padding: 0 6px 0 10px;
+  border-radius: 0;
+  font-size: 14px;
+}
+
+.win.is-sheet .win-head::before,
+.win.is-sheet .win-head::after {
+  display: none;
+}
+
+.win.is-sheet .caption {
+  width: 32px;
+  height: 32px;
+}
+
+.win.is-sheet .caption--close::before,
+.win.is-sheet .caption--close::after {
+  left: 8px;
+  top: 15px;
+  width: 15px;
+}

@@ -30,3 +30,8 @@ pnpm-debug.log*
 
 # Scratch screenshots taken while checking the UI in a browser
 .qoder-shots/
+
+# Dropped-in shell art and what the optimizer writes from it. Kept out of the repo:
+# these are Microsoft's files, so they stay local to the machine that builds them.
+public/xp-inbox/
+public/xp/

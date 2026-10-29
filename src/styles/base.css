@@ -1,243 +1,81 @@
-/* Shared tokens, resets and controls. Inlined boot CSS lives in index.html and
-   must stay in sync with these colour values. */
+/**
+ * Global rules only: the reset, the wallpaper layer, and the two things the brief
+ * calls out for phones — no horizontal scroll and no hover-dependent UI.
+ */
+@import './tokens.css';
 
-:root {
-  /* Chrome blue */
-  --chrome: #1f5fbf;
-  --chrome-dark: #0b3b8c;
-  --chrome-light: #4f7fd0;
-  --titlebar-1: #0058ee;
-  --titlebar-2: #3593ff;
-  --titlebar-3: #0036ca;
-  --titlebar-inactive: #7c9be7;
-  --frame: #0055ea;
-
-  /* Surfaces */
-  --surface: #ece9d8;
-  --surface-light: #ffffff;
-  --surface-dark: #aca899;
-  --desktop: #35689c;
-
-  /* Text */
-  --text: #111111;
-  --text-muted: #555555;
-  --text-inverted: #ffffff;
-
-  --selection: #316ac5;
-  --danger: #b3261e;
-  --ok: #2e7d32;
-
-  --font-ui: Tahoma, Verdana, "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-mono: ui-monospace, "Lucida Console", Consolas, "Courier New", monospace;
-
-  --taskbar-height: 30px;
-  --radius-win: 6px;
-}
-
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Component rules set display on buttons, bars and images, so the attribute alone
-   loses. One global rule keeps `hidden` meaningful everywhere. */
-[hidden] {
-  display: none !important;
 }
 
 html,
 body {
   height: 100%;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
-  background: #000;
+  overscroll-behavior: none;
 }
 
 body {
   font-family: var(--font-ui);
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--text);
-  user-select: none;
-  -webkit-user-select: none;
-  overscroll-behavior: none;
+  font-size: var(--size-ui);
+  color: var(--xp-face-text);
+  background: var(--xp-desktop-empty);
+  /* Cheap phones: no sub-pixel text work, no long-press callout inside the shell. */
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-/* Slim blue scrollbars, the way desktop windows of this era looked. */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #8fb0d8 #f1efe2;
+#app {
+  position: fixed;
+  inset: 0;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
 }
 
-.win-body::-webkit-scrollbar {
-  width: 16px;
-  height: 16px;
+/* The wallpaper is a separate layer so it can arrive after first paint without
+   moving anything: background-image on a fixed element costs zero layout. */
+.xp-wallpaper {
+  position: absolute;
+  inset: 0;
+  background-color: #3a6ea5;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+  transition: opacity 120ms linear;
 }
 
-.win-body::-webkit-scrollbar-track {
-  background: #f1efe2;
-  border-left: 1px solid #d4d0c8;
-}
-
-.win-body::-webkit-scrollbar-thumb {
-  background: linear-gradient(to right, #e4edf9, #b3cae9 45%, #8fb0d8);
-  border: 1px solid #7f9db9;
-}
-
-/* Text the user may want to copy: entry bodies and form fields. */
-.selectable,
-input,
-textarea {
-  user-select: text;
-  -webkit-user-select: text;
+.xp-wallpaper.is-loaded {
+  opacity: 1;
 }
 
 button {
   font: inherit;
   color: inherit;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
   cursor: pointer;
-}
-
-/* Classic beveled push button. */
-.btn {
-  min-height: 24px;
-  padding: 2px 12px;
-  font-size: 12px;
-  color: #000;
-  background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 60%, #d8d4c4 100%);
-  border: 1px solid #003c74;
-  border-radius: 3px;
-  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #e0ded0, 0 1px 2px rgba(0, 0, 0, 0.15);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.btn:hover {
-  background: linear-gradient(to bottom, #fdfdfd 0%, #fbe8c7 60%, #f7cf8a 100%);
-  border-color: #f7a934;
-}
-
-.btn:active {
-  background: linear-gradient(to bottom, #dcd7c6 0%, #ece9d8 40%, #fff 100%);
-  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.btn:disabled {
-  color: #8a8a8a;
-  background: #ece9d8;
-  border-color: var(--surface-dark);
-  box-shadow: none;
-  cursor: default;
-}
-
-.btn-primary {
-  min-height: 28px;
-  padding: 4px 18px;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(to bottom, #3f8ee8 0%, #1f5fbf 60%, #14478f 100%);
-  border-color: #0b3b8c;
-}
-
-.btn-danger {
-  color: #fff;
-  background: linear-gradient(to bottom, #e06767 0%, #c41818 60%, #8f0f0f 100%);
-  border-color: #7a0d0d;
-}
-
-/* Compact variant for inline notes and previews. */
-.btn-mini {
-  min-height: 22px;
-  padding: 1px 8px;
-  font-size: 11px;
-}
-
-/* Inset white panel, used by inputs and list backgrounds. */
-.inset {
-  background: #fff;
-  border: 1px solid #7f9db9;
-  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.14);
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 input,
 textarea,
 select {
   font: inherit;
-  font-size: 13px;
-  color: var(--text);
-  background: #fff;
-  border: 1px solid #7f9db9;
-  border-radius: 2px;
-  padding: 3px 6px;
+  color: inherit;
 }
 
-textarea {
-  line-height: 1.6;
-  resize: vertical;
-}
-
-input:focus-visible,
-textarea:focus-visible,
-button:focus-visible,
-[tabindex]:focus-visible {
-  outline: 2px solid #0b3b8c;
-  outline-offset: 1px;
-}
-
-.svg-icon {
-  width: 16px;
-  height: 16px;
-  flex: none;
-  display: block;
-}
-
-/* Line used by status messages: loading, empty, error. */
-.note {
-  padding: 12px;
-  font-size: 13px;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.note strong {
-  color: var(--text);
-}
-
-.note-error {
-  color: var(--danger);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  border: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-}
-
-/* Touch keyboards: 16px fields keep iOS Safari from zooming on focus. */
-@media (pointer: coarse) {
+/* 16px inputs on phones: anything smaller makes iOS Safari zoom the whole page. */
+@media (max-width: 767px) {
   input,
   textarea,
   select {
@@ -245,26 +83,29 @@ button:focus-visible,
   }
 }
 
-/* Phones: 44px controls once the layout becomes a full-screen sheet. */
-@media (max-width: 480px) {
-  .btn {
-    min-height: 44px;
-    padding: 8px 14px;
-    font-size: 13px;
-  }
+:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: 1px;
+}
 
-  .btn-mini {
-    min-height: 36px;
-  }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 
-  .btn-primary {
-    min-height: 44px;
-    padding: 8px 20px;
-  }
-
-  input,
-  textarea,
-  select {
-    padding: 9px 10px;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
   }
 }

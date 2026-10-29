@@ -1,0 +1,158 @@
+/**
+ * Taskbar and tray, at the measured 30px with the real gradient stops from
+ * tokens.css. Phones get a 44px bar: the --taskbar-height token is overridden here,
+ * so everything that offsets itself against the bar (icons, windows, sheets) moves
+ * with it.
+ */
+@import '../styles/tokens.css';
+
+.taskbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 8000;
+  display: flex;
+  align-items: center;
+  height: calc(var(--taskbar-height) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--grad-taskbar);
+  border-top: 1px solid #3a88ec;
+  color: #fff;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---- Start ---- */
+.tb-start {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: calc(var(--taskbar-height) - 3px);
+  margin: 0 2px 0 0;
+  padding: 0 14px 2px 8px;
+  border-radius: 0 11px 11px 0;
+  background: var(--grad-start);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45), 1px 0 3px rgba(0, 0, 0, 0.35);
+  font-family: var(--font-title);
+  color: #fff;
+}
+
+.tb-start-text {
+  font-size: 17px;
+  font-style: italic;
+  font-weight: 700;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.6);
+  letter-spacing: -0.2px;
+}
+
+.tb-start:hover,
+.tb-start.is-open {
+  filter: brightness(112%);
+}
+
+.tb-start:active,
+.tb-start.is-open {
+  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+/* ---- One button per window ---- */
+.tb-tasks {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 3px;
+  overflow: hidden;
+}
+
+.tb-task {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--task-button-height);
+  max-width: var(--task-button-max-width);
+  min-width: 44px;
+  padding: 0 8px;
+  border-radius: 2px;
+  background: var(--task-button-face);
+  box-shadow: var(--shadow-task);
+  font-size: 11px;
+  color: #fff;
+}
+
+.tb-task-text {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tb-task:hover {
+  background: var(--task-button-hover);
+}
+
+.tb-task.is-active {
+  background: var(--task-button-active);
+  box-shadow: var(--shadow-task-active);
+  font-weight: 700;
+}
+
+/* ---- Tray ---- */
+.tb-tray {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 100%;
+  padding: 0 10px;
+  border-left: 1px solid #1042af;
+  background: var(--grad-tray);
+  box-shadow: inset 1px 0 1px #18bbff;
+}
+
+.tb-tray-button {
+  display: flex;
+  align-items: center;
+  opacity: 0.9;
+}
+
+.tb-tray-button:hover {
+  opacity: 1;
+}
+
+.tb-clock {
+  font-size: var(--size-clock);
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.4);
+  min-width: 34px;
+  text-align: right;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --taskbar-height: 44px;
+  }
+
+  .tb-start {
+    height: 38px;
+    padding-right: 16px;
+  }
+
+  .tb-start-text {
+    font-size: 18px;
+  }
+
+  .tb-task {
+    height: 34px;
+    min-width: var(--touch-target);
+  }
+
+  .tb-tray {
+    gap: 14px;
+    padding: 0 12px;
+  }
+
+  .tb-clock {
+    font-size: 12px;
+  }
+}

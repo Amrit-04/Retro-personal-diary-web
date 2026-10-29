@@ -1,4 +1,5 @@
 import { defineConfig, type Plugin } from 'vite';
+import preact from '@preact/preset-vite';
 
 /**
  * Load the entry stylesheet without blocking first paint.
@@ -26,7 +27,7 @@ function nonBlockingStylesheet(): Plugin {
 
 export default defineConfig({
   // Modern browsers only: no polyfills, smallest possible output.
-  plugins: [nonBlockingStylesheet()],
+  plugins: [preact(), nonBlockingStylesheet()],
   build: {
     target: 'es2020',
     modulePreload: { polyfill: false },

@@ -1,73 +1,15 @@
 /**
- * Startup sound. Browsers block autoplay, so the login tap is the gesture that
- * unlocks the element and the welcome screen is where it actually plays.
- * One short mono file, preloaded only after the splash starts.
+ * The startup sound, and the mute switch the tray exposes.
+ *
+ * iOS only lets audio start from inside a real gesture, and the welcome screen is
+ * not one. So the login tile's tap handler calls unlock() — play() then pause() —
+ * which claims the gesture for the element, and the welcome screen plays it for
+ * real a moment later. Nothing here awaits, or the gesture window closes.
  */
+import { signal } from '@preact/signals';
+import { STARTUP_SOUND } from '../lib/assets';
 
-const src = '/startup.mp3';
-const MUTE_KEY = 'diaryxp.muted';
-
-let element: HTMLAudioElement | null = null;
-let muted = readMuted();
-
-function audio(): HTMLAudioElement {
-  if (!element) {
-    element = new Audio();
-    element.preload = 'none';
-    element.volume = 0.65;
-  }
-  return element;
-}
-
-export function isMuted(): boolean {
-  return muted;
-}
-
-/** Called when the splash begins, so the bytes arrive during the animation. */
-export function preloadStartupSound(): void {
-  if (muted) return;
-  audio().src = src;
-  audio().load();
-}
-
-/**
- * Called synchronously inside the login tap. On iOS Safari this is what marks the
- * element as user-activated; the audible play comes later, on the welcome screen.
- */
-export function unlockAudio(): void {
-  const player = audio();
-  if (!player.src) player.src = src;
-  const attempt = player.play();
-  if (attempt && typeof attempt.catch === 'function') {
-    attempt.catch(() => undefined);
-  }
-  player.pause();
-  player.currentTime = 0;
-}
-
-export async function playStartupSound(): Promise<void> {
-  if (muted) return;
-  const player = audio();
-  player.src = src;
-  try {
-    player.currentTime = 0;
-    await player.play();
-  } catch {
-    /* Blocked or missing file: a silent boot is still a working boot. */
-  }
-}
-
-export function stopStartupSound(): void {
-  element?.pause();
-}
-
-/** Returns the new muted state, for the tray icon. */
-export function toggleMuted(): boolean {
-  muted = !muted;
-  writeMuted(muted);
-  if (muted) element?.pause();
-  return muted;
-}
+const MUTE_KEY = 'diary-xp.muted';
 
 function readMuted(): boolean {
   try {
@@ -77,10 +19,53 @@ function readMuted(): boolean {
   }
 }
 
-function writeMuted(value: boolean): void {
+export const muted = signal(readMuted());
+
+let element: HTMLAudioElement | null = null;
+
+function audio(): HTMLAudioElement | null {
+  if (muted.value || typeof Audio === 'undefined') return null;
+  if (!element) {
+    element = new Audio();
+    // Never fetched during the critical path; load() during the splash warms it.
+    element.preload = 'none';
+    element.src = STARTUP_SOUND;
+  }
+  return element;
+}
+
+/** Called when the splash appears: the file is on its way before it is needed. */
+export function prepareSound(): void {
+  audio()?.load();
+}
+
+export function unlockSound(): void {
+  const player = audio();
+  if (!player) return;
+  const playing = player.play();
+  if (playing && typeof playing.catch === 'function') playing.catch(() => undefined);
+  player.pause();
+  player.currentTime = 0;
+}
+
+export function playStartup(): void {
+  const player = audio();
+  if (!player) return;
+  player.volume = 0.7;
+  const playing = player.play();
+  if (playing && typeof playing.catch === 'function') playing.catch(() => undefined);
+}
+
+export function setMuted(value: boolean): void {
+  muted.value = value;
   try {
     localStorage.setItem(MUTE_KEY, value ? '1' : '0');
   } catch {
-    /* Preference is lost if storage is unavailable; the sound still works. */
+    /* Private mode: the choice just does not survive a reload. */
   }
+  if (value) element?.pause();
+}
+
+export function toggleMuted(): void {
+  setMuted(!muted.value);
 }

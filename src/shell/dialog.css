@@ -1,0 +1,230 @@
+/**
+ * Dialog chrome. The frame is the same Luna window edge used by Window.css, at
+ * message-box size; the buttons are the standard client-area push buttons.
+ */
+@import '../styles/tokens.css';
+
+.dlg-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: transparent;
+}
+
+.dlg {
+  pointer-events: auto;
+  max-width: min(420px, 100%);
+  box-shadow: 2px 3px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* ---- Message box: Luna frame, white body, blue title band ---- */
+.dlg--box {
+  display: flex;
+  flex-direction: column;
+  padding: 3px;
+  padding-top: 0;
+  background: var(--xp-blue-frame);
+  border-radius: var(--window-radius-top) var(--window-radius-top) 0 0;
+}
+
+.dlg-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--titlebar-height);
+  padding: 0 3px 0 8px;
+  border-radius: var(--window-radius-top) var(--window-radius-top) 0 0;
+  background: var(--grad-title-active);
+  color: #fff;
+  font-family: var(--font-title);
+  font-size: var(--size-title);
+  font-weight: 700;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+
+.dlg-x {
+  position: relative;
+  width: 21px;
+  height: 20px;
+  border: 1px solid #fff;
+  border-radius: 3px;
+  background: var(--grad-cap-red);
+  box-shadow: var(--shadow-cap-red);
+  flex: none;
+}
+
+.dlg-x:hover,
+.caption:hover {
+  filter: brightness(120%);
+}
+
+.dlg-x:active,
+.caption:active {
+  filter: brightness(90%);
+}
+
+.dlg-x-bar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 2px;
+  margin: -1px 0 0 -5px;
+  background: #fff;
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+
+.dlg-x-bar--flip {
+  transform: rotate(-45deg);
+}
+
+.dlg-x--band {
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.dlg-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 18px 10px;
+  background: var(--xp-face);
+}
+
+.dlg-text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  max-width: 34ch;
+  overflow-wrap: break-word;
+}
+
+.dlg-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 14px 14px;
+  background: var(--xp-face);
+}
+
+/* ---- Standard push button ---- */
+.dlg-button {
+  min-width: 78px;
+  height: 23px;
+  padding: 0 12px;
+  border: 1px solid #003c74;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, #ffffff 0, #fbfbf6 46%, #e6e6d8 50%, #d6d6c4 100%);
+  font-size: 12px;
+  color: #000;
+}
+
+.dlg-button:hover {
+  border-color: #56b0ff;
+  background: linear-gradient(to bottom, #ffffff 0, #f3f9ff 46%, #dcecfb 50%, #c9e2f8 100%);
+}
+
+.dlg-button:active {
+  background: linear-gradient(to bottom, #d6d6c4 0, #e6e6d8 50%, #fbfbf6 100%);
+}
+
+.dlg-button--default {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- Log off: the two-band blue dialog ---- */
+.dlg--logoff {
+  width: var(--dialog-width);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--dialog-band);
+}
+
+.dlg-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 28px;
+  padding: 4px 8px;
+  background: var(--dialog-band);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dlg-band--foot {
+  justify-content: flex-end;
+}
+
+.dlg-logoff-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 12px;
+  background: var(--grad-dialog-body);
+  color: #fff;
+}
+
+.dlg-lead {
+  margin: 0;
+  font-size: 12px;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+.dlg-round-row {
+  display: flex;
+  gap: 18px;
+}
+
+.dlg-round {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+.dlg-round-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 34px in the reference; 44px is the brief's minimum tap target on touch. */
+  width: 34px;
+  height: 34px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #6c95e8, #2e5cc0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.dlg-round:hover .dlg-round-circle {
+  background: linear-gradient(to bottom, #86abf2, #3f70dd);
+}
+
+.dlg-round:active .dlg-round-circle {
+  background: linear-gradient(to bottom, #2e5cc0, #6c95e8);
+}
+
+@media (pointer: coarse) {
+  .dlg-round {
+    min-height: var(--touch-target);
+  }
+  .dlg-round-circle {
+    width: 40px;
+    height: 40px;
+  }
+  .dlg-button {
+    min-height: 32px;
+  }
+}
