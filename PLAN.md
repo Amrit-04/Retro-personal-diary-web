@@ -239,11 +239,20 @@ thumb-reachable above the home-indicator. Icons become a 3–4 column grid. Veri
 
 ## 9. Visual direction
 
-Calm blue chrome (`#0f61cb`/`#2b5ea7` family from the current tokens), soft neutral window
-surfaces, flat desktop colour, one thin bevel on title bars, one soft shadow per window, restrained
-taskbar. All icons inline SVG, original drawings only (folder, text file, explorer, volume, user).
-System font stack (Tahoma, Verdana, system-ui). Visible `:focus-visible`, real `<button>`s, labels
-and `aria-live` for the clock.
+Deliberate Windows-XP-era chrome, in the spirit of the three reference sites (win32.run for the
+POST, mitchivin.com for the wallpaper, tray and login gate, winxp.vercel.app for the windows and
+Start menu): an original SVG hill wallpaper, labelled desktop icons, a 30 px blue taskbar with a
+green italic Start button, tray clock, a two-column Start menu, and a full three-button window
+frame. All artwork stays original: icons, glyphs, wallpaper and sound are drawn or synthesised for
+this project; no Microsoft assets. System font stack (Tahoma, Verdana, system-ui). Visible
+`:focus-visible`, real `<button>`s, labels and `aria-live` for the clock.
+
+**Revised after the first review (29 Oct 2026).** The first build read the old "minimal, not a
+parody" restraint too literally: it had a flat desktop colour and almost none of the XP furniture,
+so it did not resemble the references. The visual layer described above is what now exists.
+Functional minimise/maximise ships with the three-button chrome, and the phone-sheet breakpoint
+moved from 768 px to 480 px so a narrow desktop (including the 531 px preview where the site was
+first reviewed) still reads as a desktop rather than a phone app.
 
 ---
 
@@ -300,11 +309,19 @@ the real startup sound to replace the placeholder; Firebase project id for `.fir
 7. **Startup sound is synthesised** (`scripts/make-chime.mjs` → 17 KB mono MP3, inside the ~40 KB
    budget) because no audio file was provided. Replace it with a personal one at
    `public/startup.mp3`.
-8. **Desktop-width layout was verified by disabling the mobile overrides** in a 531 px viewport, not
-   on a genuinely wide screen; geometry at 1280 px and above has not been eyeballed.
+8. **Both layouts were verified visually.** Desktop geometry was captured at 1280 × 800 in
+   headless Chrome; phone sheets were checked at 360 × 640 and 390 × 844 in same-origin iframes.
+   The 531 × 558 preview also reads as a desktop because the sheet breakpoint sits at 480 px.
 9. **Lighthouse SEO is 63 on purpose:** `public/robots.txt` says `Disallow: /` because a private
    diary should not be crawled, which trips the `is-crawlable` audit. Performance, accessibility and
    best practices are all 100 (mobile, simulated Fast 3G).
 10. **The entry stylesheet is preloaded rather than render-blocking**, which is what took
     `render-blocking-resources` from 0 to 1; a cached-response guard in `main.ts` re-applies it so the
     desktop can never come up unstyled.
+11. **Window controls grew to three, and the phone breakpoint moved to 480 px.** The original plan
+    said close-only; the reference sites show the full three-button chrome and the user asked for
+    that look, so minimise and maximise now work rather than being decoration. Dragging and
+    resizing remain out of scope.
+12. **The first-review screenshots came from the dev server** while the final audit ran against the
+    production build served on port 4173. Both use the same source; the build is the one that was
+    measured.

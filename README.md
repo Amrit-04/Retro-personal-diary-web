@@ -91,7 +91,7 @@ at 1 MB and restricted to `image/*`, and anything outside `/entries` unreachable
 
 ## How it stays fast
 
-The critical path is HTML + entry CSS + entry JS, about **9.1 KB gzipped** against a
+The critical path is HTML + entry CSS + entry JS, about **10.7 KB gzipped** against a
 25 KB budget (`npm run size` prints the table). Everything else is a lazy chunk:
 
 * Firestore is loaded from `firebase/firestore/lite`, and the Storage SDK lives only in the
@@ -153,8 +153,9 @@ The rules enforce everything; the UI only knows whether to draw a button.
 
 ## Assets
 
-Nothing here is Microsoft's. The chrome, icons, glyphs and wallpapers are drawn from
-scratch as inline SVG and CSS; the startup chime is synthesised by `scripts/make-chime.mjs`
+Nothing here is Microsoft's. The chrome, icons, glyphs and the hill wallpaper
+(`public/wallpaper.svg`) are drawn from scratch as inline SVG, a standalone SVG and CSS; the
+startup chime is synthesised by `scripts/make-chime.mjs`
 (a rising major arpeggio written as a WAV, then encoded to MP3 by `ffmpeg`). Replace it with
 your own short mono MP3 at `public/startup.mp3` — keep it under about 40 KB, since it is
 fetched on the way into the desktop:
@@ -166,5 +167,5 @@ ffmpeg -i your-sound.wav -ac 1 -b:a 56k -map_metadata -1 public/startup.mp3
 ## Known limits of v1
 
 No comments, likes, search, tags, markdown, rich text, notifications, analytics, settings,
-multi-user authoring, window dragging/resizing/minimising, CRT filter, Paint or
-Minesweeper. Close is the only window control, and Back closes the top window.
+multi-user authoring, window dragging or resizing, CRT filter, Paint or Minesweeper. Windows
+can be minimised, maximised and closed; Back closes the top window.
