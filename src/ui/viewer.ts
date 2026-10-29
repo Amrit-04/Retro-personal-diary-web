@@ -111,12 +111,12 @@ function retry(onRetry: () => void): HTMLElement {
 /* ------------------------------------------------------------------ rendering */
 
 function renderEntry(page: HTMLElement, entry: Entry): void {
-  replaceChildren(page, [
+  replaceChildren(page, h('div', { class: 'viewer-doc' }, [
     h('h2', { class: 'entry-title' }, entry.title),
     h('p', { class: 'entry-date' }, longDate(entry.date)),
     entry.imageUrl ? doodle(entry) : null,
     h('div', { class: 'entry-text' }, entry.content),
-  ]);
+  ]));
 }
 
 /**

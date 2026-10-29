@@ -1,12 +1,41 @@
-/* Admin editor: a plain form on the window's beige surface, one field per row. */
+/* Admin editor: fields scroll, the save bar and its feedback stay in view. */
+
+.win-editor .win-body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
 .editor {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 720px;
+  min-height: 0;
+  height: 100%;
+  max-width: 760px;
   margin: 0 auto;
   width: 100%;
+}
+
+.ed-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 12px 14px;
+}
+
+.ed-foot {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 12px 10px;
+  background: var(--surface);
+  border-top: 1px solid var(--surface-dark);
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.7) inset;
 }
 
 .ed-field {
@@ -37,8 +66,8 @@ input[type='date'].ed-input {
 
 .ed-content {
   min-height: 240px;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 16px;
+  font-family: var(--font-ui);
+  font-size: 14px;
   line-height: 1.6;
 }
 
@@ -86,8 +115,11 @@ input[type='date'].ed-input {
 }
 
 .ed-drop-icon {
-  font-size: 26px;
-  line-height: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  line-height: 0;
 }
 
 .ed-drop-text {
@@ -166,17 +198,18 @@ input[type='date'].ed-input {
   transition: transform 120ms linear;
 }
 
+/* One row of actions, pinned under the scroll area. */
 .ed-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  padding-top: 4px;
-  border-top: 1px solid var(--surface-dark);
+  padding-top: 2px;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 480px) {
   .ed-content {
     min-height: 200px;
+    font-size: 16px;
   }
 
   .ed-actions .btn {

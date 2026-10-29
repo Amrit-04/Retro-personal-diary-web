@@ -7,7 +7,7 @@ import '../styles/desktop.css';
 import { h, replaceChildren, delegate } from '../lib/dom';
 import { fileName } from '../lib/slug';
 import { getRecentEntries, type Entry } from '../firebase/entries';
-import { explorerIconSvg, textFileIconSvg } from './icons';
+import { folderIconSvg, textFileIconSvg } from './icons';
 import { initWindows, openEditorWindow, openEntryWindow, openExplorerWindow, openWindowCount } from './window';
 import { mountTaskbar } from './taskbar';
 import type { Session } from '../firebase/auth';
@@ -59,7 +59,7 @@ async function renderIcons(host: HTMLElement): Promise<void> {
     'button',
     { class: 'desk-icon', type: 'button', dataset: { open: 'explorer' }, title: 'File Explorer' },
     [
-      h('span', { class: 'desk-icon-art', html: explorerIconSvg() }),
+      h('span', { class: 'desk-icon-art', html: folderIconSvg() }),
       h('span', { class: 'desk-icon-label' }, 'File Explorer'),
     ],
   );

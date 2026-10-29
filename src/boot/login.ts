@@ -1,5 +1,6 @@
 /**
- * Login screen. Two tone bands, wordmark on the left, user tile on the right.
+ * Welcome screen. A single blue band with the wordmark on the left and the user
+ * tile on the right, sitting on the dark logon background.
  * The tile is the Google sign-in, and the tap on it doubles as the gesture that
  * unlocks audio. It knows nothing about Firebase: the caller hands it a session
  * (already restored, or null) and a callback for the tap.
@@ -35,7 +36,7 @@ export function mountLogin(host: HTMLElement, options: LoginOptions): HTMLElemen
       h('span', { class: 'user-name' }, options.session ? options.session.name : 'Sign in with Google'),
       h('span', { class: 'user-sub' }, options.session
         ? 'Click to open your diary'
-        : options.demo ? 'Demo account (no Firebase configured)' : 'Google account'),
+        : options.demo ? 'Demo account' : 'Google account'),
     ],
   );
 
@@ -62,11 +63,11 @@ export function mountLogin(host: HTMLElement, options: LoginOptions): HTMLElemen
   const screen = h('div', { class: 'login screen is-on' }, [
     h('div', { class: 'login-inner' }, [
       h('div', { class: 'login-brand' }, [
-        h('div', { class: 'brand-mark' }, ['DIARY']),
-        h('div', { class: 'brand-sub' }, ['PERSONAL JOURNAL SYSTEM']),
+        h('div', { class: 'brand-mark' }, ['DIARY', h('span', { class: 'brand-xp' }, ['XP'])]),
+        h('div', { class: 'brand-sub' }, ['personal journal system']),
       ]),
       h('div', { class: 'login-side' }, [
-        h('p', { class: 'login-hint' }, ['To begin, click your user to log in']),
+        h('p', { class: 'login-hint' }, ['To begin, click your user name']),
         tile,
         error,
         h('p', { class: 'login-foot' }, ['After you log on, this machine is yours.']),
@@ -88,7 +89,7 @@ export function unmountLogin(screen: HTMLElement): void {
 }
 
 function restartGlyph(): HTMLElement {
-  return h('span', { class: 'avatar-fallback', html: restartSvgTiny() });
+  return h('span', { class: 'login-restart-icon', html: restartSvgTiny() });
 }
 
 function restartSvgTiny(): string {

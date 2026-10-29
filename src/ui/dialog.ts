@@ -5,6 +5,7 @@
  */
 import '../styles/dialog.css';
 import { h } from '../lib/dom';
+import { closeGlyphSvg } from './icons';
 
 export interface DialogAction {
   label: string;
@@ -39,13 +40,27 @@ export function ask(options: DialogOptions): Promise<string | null> {
       }, action.label),
     );
 
+    const closeButton = h('button', {
+      class: 'dialog-x',
+      type: 'button',
+      'aria-label': 'Close dialog',
+      html: closeGlyphSvg(),
+    });
+
     const backdrop = h('div', { class: 'dialog-backdrop' }, [
       h('div', { class: 'dialog', role: 'dialog', 'aria-modal': 'true', 'aria-label': options.title }, [
-        h('h2', { class: 'dialog-title' }, options.title),
-        h('p', { class: 'dialog-message' }, options.message),
+        h('div', { class: 'dialog-bar' }, [
+          h('span', { class: 'dialog-bar-title' }, options.title),
+          closeButton,
+        ]),
+        h('div', { class: 'dialog-body' }, [
+          h('p', { class: 'dialog-message' }, options.message),
+        ]),
         h('div', { class: 'dialog-actions' }, buttons),
       ]),
     ]);
+
+    closeButton.addEventListener('click', () => settle(null));
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {

@@ -38,15 +38,25 @@ export function buildExplorer(session: Session): WindowContent {
     }
   });
 
-  const up = navButton('Up One Level', upArrowSvg(), () => {
+  const up = navButton('Up', upArrowSvg(), () => {
     const screen = current();
     if (screen.level === 'root') return;
     crumbs = screen.level === 'month' ? [ROOT, { level: 'year', year: screen.year }] : [ROOT];
     draw();
-  });
+  }, 'Up One Level');
 
   const body = h('div', { class: 'explorer' }, [
-    h('div', { class: 'ex-bar' }, [back, up, trail]),
+    h('div', { class: 'ex-bar' }, [
+      back,
+      up,
+      h('span', { class: 'ex-addr-label', 'aria-hidden': 'true' }, 'Address'),
+      trail,
+    ]),
+    h('div', { class: 'ex-head', 'aria-hidden': 'true' }, [
+      h('span', {}),
+      h('span', {}, 'Name'),
+      h('span', { class: 'ex-head-meta' }, 'Contents'),
+    ]),
     list,
   ]);
 
@@ -72,7 +82,9 @@ export function buildExplorer(session: Session): WindowContent {
   }
 
   function drawTrail(): void {
-    const parts: (HTMLElement | null)[] = [];
+    const parts: (HTMLElement | null)[] = [
+      h('span', { class: 'ex-addr-icon', 'aria-hidden': 'true', html: folderSmallSvg() }),
+    ];
 
     crumbs.forEach((crumb, index) => {
       if (index > 0) parts.push(h('span', { class: 'ex-sep', 'aria-hidden': 'true' }, '›'));
@@ -254,15 +266,22 @@ function entryRow(entry: Entry): HTMLElement {
   );
 }
 
-function navButton(label: string, icon: string, onClick: () => void): HTMLButtonElement {
+function navButton(
+  label: string,
+  icon: string,
+  onClick: () => void,
+  accessibleLabel = label,
+): HTMLButtonElement {
   return h('button', {
     class: 'ex-nav',
     type: 'button',
-    'aria-label': label,
-    title: label,
+    'aria-label': accessibleLabel,
+    title: accessibleLabel,
     onclick: onClick,
-    html: icon,
-  });
+  }, [
+    h('span', { class: 'ex-nav-icon', html: icon }),
+    h('span', { class: 'ex-nav-label' }, label),
+  ]);
 }
 
 /** Three pulsing bars: the shape of the list that is about to arrive. */

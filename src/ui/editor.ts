@@ -16,7 +16,7 @@ import { fileName } from '../lib/slug';
 import { getEntry, saveEntry, type Entry } from '../firebase/entries';
 import { ACCEPTED_TYPES, prepare, validateSource } from '../lib/image';
 import { deleteEntryFiles, uploadEntryImages, type EntryImages } from '../firebase/admin';
-import { newEntryIconSvg } from './icons';
+import { newEntryIconSvg, pictureGlyphSvg } from './icons';
 import type { WindowContent, WindowHandle } from './window';
 import type { Session } from '../firebase/auth';
 
@@ -65,7 +65,7 @@ export function buildEditor(session: Session, targetDate?: string): WindowConten
   });
 
   const drop = h('label', { class: 'ed-drop' }, [
-    h('span', { class: 'ed-drop-icon', 'aria-hidden': 'true' }, '🖼'),
+    h('span', { class: 'ed-drop-icon', 'aria-hidden': 'true', html: pictureGlyphSvg() }),
     h('span', { class: 'ed-drop-text' }, [
       h('strong', {}, 'Drop a picture here'),
       h('span', {}, 'or click to choose one. PNG, JPEG, WebP or GIF — resized to 800 px before it uploads.'),
@@ -89,18 +89,22 @@ export function buildEditor(session: Session, targetDate?: string): WindowConten
   const cancelButton = h('button', { class: 'btn', type: 'button', onclick: () => handle?.close() }, 'Cancel');
 
   const body = h('div', { class: 'editor' }, [
-    session.hasAdminClaim ? null : h('p', { class: 'ed-warning' }, [
-      'Your account has no administrator claim, so the server will refuse this save. ',
-      'Run scripts/set-admin.mjs, then sign out and back in.',
+    h('div', { class: 'ed-scroll' }, [
+      session.hasAdminClaim ? null : h('p', { class: 'ed-warning' }, [
+        'Your account has no administrator claim, so the server will refuse this save. ',
+        'Run scripts/set-admin.mjs, then sign out and back in.',
+      ]),
+      field('Date', dateInput, dateHint),
+      field('Title', titleInput, h('span', { class: 'ed-hint' }, 'Also becomes the file name on the desktop.')),
+      field('Entry', contentInput, contentCount),
+      field('Doodle', h('div', { class: 'ed-doodle' }, [drop, h('div', { class: 'ed-picked' }, [preview, removeButton])]),
+        doodleHint),
     ]),
-    field('Date', dateInput, dateHint),
-    field('Title', titleInput, h('span', { class: 'ed-hint' }, 'Also becomes the file name on the desktop.')),
-    field('Entry', contentInput, contentCount),
-    field('Doodle', h('div', { class: 'ed-doodle' }, [drop, h('div', { class: 'ed-picked' }, [preview, removeButton])]),
-      doodleHint),
-    status,
-    progress,
-    h('div', { class: 'ed-actions' }, [cancelButton, saveButton]),
+    h('div', { class: 'ed-foot' }, [
+      status,
+      progress,
+      h('div', { class: 'ed-actions' }, [cancelButton, saveButton]),
+    ]),
   ]);
 
   let objectUrl: string | null = null;

@@ -1,9 +1,9 @@
 /**
- * The window manager: open, focus, close. Nothing else. No dragging, resizing,
- * minimising or maximising in v1, which keeps it to one file and keeps layout cheap.
+ * The window manager: open, focus, minimise, maximise, close. No dragging or
+ * resizing, which keeps it to one file and keeps layout cheap.
  *
- * Desktop (>= 768px): windows are centred and cascaded with a transform offset.
- * Mobile: a window is a full-screen sheet and only the top one is visible.
+ * Desktop (>= 481px): windows are centred and cascaded with a transform offset.
+ * Phones: a window is a full-screen sheet and only the top one is visible.
  *
  * The browser Back button closes the top window. Opening pushes exactly one history
  * entry and closing always happens in the popstate handler, so there is a single
@@ -11,7 +11,7 @@
  */
 import '../styles/window.css';
 import { h, setText } from '../lib/dom';
-import { closeGlyphSvg } from './icons';
+import { closeGlyphSvg, maximizeGlyphSvg, minimizeGlyphSvg, restoreGlyphSvg } from './icons';
 import type { Session } from '../firebase/auth';
 
 export interface WindowContent {
@@ -36,9 +36,12 @@ export interface WindowHandle {
 interface Managed {
   id: number;
   title: string;
+  icon: string;
   root: HTMLElement;
   body: HTMLElement;
   statusNode: HTMLElement | null;
+  minimized: boolean;
+  maximized: boolean;
   /** Applies a new title everywhere it appears: bar, dialog label, close button, taskbar. */
   retitle: (text: string) => void;
   onClose?: () => void;
@@ -97,8 +100,24 @@ export function openWindow(options: WindowContent & {
     ? h('div', { class: 'win-status' }, options.status)
     : null;
 
+  const minimizeButton = h('button', {
+    class: 'win-btn win-min',
+    type: 'button',
+    title: 'Minimize',
+    'aria-label': `Minimize ${options.title}`,
+    html: minimizeGlyphSvg(),
+  });
+
+  const maximizeButton = h('button', {
+    class: 'win-btn win-max',
+    type: 'button',
+    title: 'Maximize',
+    'aria-label': `Maximize ${options.title}`,
+    html: maximizeGlyphSvg(),
+  });
+
   const closeButton = h('button', {
-    class: 'win-close',
+    class: 'win-btn win-close',
     type: 'button',
     'aria-label': `Close ${options.title}`,
     html: closeGlyphSvg(),
@@ -116,12 +135,20 @@ export function openWindow(options: WindowContent & {
     h('div', { class: 'win-titlebar' }, [
       h('span', { class: 'win-icon', html: options.icon }),
       titleNode,
-      h('div', { class: 'win-controls' }, closeButton),
+      h('div', { class: 'win-controls' }, [minimizeButton, maximizeButton, closeButton]),
     ]),
     bodyHost,
     statusNode,
   ]);
 
+  minimizeButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    minimizeWindow(managed);
+  });
+  maximizeButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    toggleMaximize(managed, maximizeButton);
+  });
   closeButton.addEventListener('click', (event) => {
     event.stopPropagation();
     requestClose(managed);
@@ -141,13 +168,18 @@ export function openWindow(options: WindowContent & {
   const managed: Managed = {
     id,
     title: options.title,
+    icon: options.icon,
     root,
     body: bodyHost,
     statusNode,
+    minimized: false,
+    maximized: false,
     retitle: (text) => {
       managed.title = text;
       setText(titleNode, text);
       root.setAttribute('aria-label', text);
+      minimizeButton.setAttribute('aria-label', `Minimize ${text}`);
+      maximizeButton.setAttribute('aria-label', `${managed.maximized ? 'Restore' : 'Maximize'} ${text}`);
       closeButton.setAttribute('aria-label', `Close ${text}`);
       syncButtons();
     },
@@ -207,20 +239,68 @@ function onPopState(): void {
 
 export function focusWindow(id: number): void {
   const target = stack.find((item) => item.id === id);
-  if (!target || stack[stack.length - 1] === target) return;
+  if (!target) return;
 
-  stack.splice(stack.indexOf(target), 1);
-  stack.push(target);
+  if (target.minimized) {
+    target.minimized = false;
+    target.root.classList.remove('is-minimized');
+  }
+
+  if (stack[stack.length - 1] !== target) {
+    stack.splice(stack.indexOf(target), 1);
+    stack.push(target);
+  }
+
   restack();
   onChange();
 }
 
-/** Reapplies z-order, the active title bar and the mobile single-sheet rule. */
+/** The taskbar button for the active window folds it away; any other raises it. */
+function pressTaskbarButton(id: number): void {
+  const target = stack.find((item) => item.id === id);
+  if (!target) return;
+
+  if (!target.minimized && stack[stack.length - 1] === target) minimizeWindow(target);
+  else focusWindow(id);
+}
+
+function minimizeWindow(target: Managed): void {
+  target.minimized = true;
+  target.root.classList.add('is-minimized');
+
+  // The next visible window takes over, exactly as it would on a real desktop.
+  const next = [...stack].reverse().find((item) => item !== target && !item.minimized);
+  if (next) focusWindow(next.id);
+  else {
+    restack();
+    onChange();
+  }
+}
+
+function toggleMaximize(target: Managed, button: HTMLButtonElement): void {
+  target.maximized = !target.maximized;
+  target.root.classList.toggle('is-maximized', target.maximized);
+
+  if (target.minimized) {
+    target.minimized = false;
+    target.root.classList.remove('is-minimized');
+  }
+
+  button.innerHTML = target.maximized ? restoreGlyphSvg() : maximizeGlyphSvg();
+  button.title = target.maximized ? 'Restore Down' : 'Maximize';
+  button.setAttribute('aria-label', `${target.maximized ? 'Restore' : 'Maximize'} ${target.title}`);
+
+  focusWindow(target.id);
+}
+
+/** Reapplies z-order, the active title bar and the phone single-sheet rule. */
 function restack(): void {
+  const focused = stack[stack.length - 1];
+  const visibleTop = focused && !focused.minimized ? focused : null;
+
   stack.forEach((item, index) => {
-    const top = index === stack.length - 1;
     item.root.style.zIndex = String(100 + index);
-    item.root.classList.toggle('is-active', top);
+    item.root.classList.toggle('is-active', item === visibleTop);
   });
 
   syncButtons();
@@ -232,14 +312,19 @@ function syncButtons(): void {
 
   const fragment = document.createDocumentFragment();
   stack.forEach((item, index) => {
+    const active = index === stack.length - 1 && !item.minimized;
     fragment.appendChild(
       h('button', {
-        class: `taskbtn${index === stack.length - 1 ? ' is-active' : ''}`,
+        class: `taskbtn${active ? ' is-active' : ''}`,
         type: 'button',
-        'aria-pressed': index === stack.length - 1 ? 'true' : 'false',
+        title: item.title,
+        'aria-pressed': active ? 'true' : 'false',
         dataset: { winId: String(item.id) },
-        onclick: () => focusWindow(item.id),
-      }, item.title),
+        onclick: () => pressTaskbarButton(item.id),
+      }, [
+        h('span', { class: 'taskbtn-icon', html: item.icon }),
+        h('span', { class: 'taskbtn-label' }, item.title),
+      ]),
     );
   });
 

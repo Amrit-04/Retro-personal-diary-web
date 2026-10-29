@@ -1,32 +1,46 @@
-/* File Explorer: toolbar, breadcrumb address bar, one scrolling list. */
+/* File Explorer: labelled toolbar, breadcrumb address bar, one dense list. */
 
 .explorer {
   display: flex;
   flex-direction: column;
-  gap: 6px;
   min-height: 100%;
+  padding: 3px 4px 4px;
 }
 
 .ex-bar {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding-bottom: 6px;
+  align-items: stretch;
+  gap: 3px;
+  padding: 2px 0 4px;
   border-bottom: 1px solid var(--surface-dark);
 }
 
+/* Toolbar buttons carry a label, the way a desktop file manager did. */
 .ex-nav {
-  width: 30px;
-  height: 30px;
+  width: 52px;
+  min-height: 40px;
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1px;
+  flex: none;
+  font-size: 10px;
   color: var(--chrome-dark);
   background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 70%, #ddd8c6 100%);
   border: 1px solid #91a4bd;
   border-radius: 3px;
   box-shadow: inset 0 1px 0 #fff;
-  flex: none;
+}
+
+.ex-nav-icon {
+  display: flex;
+  line-height: 0;
+}
+
+.ex-nav .svg-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .ex-nav:hover:not(:disabled) {
@@ -40,14 +54,22 @@
   cursor: default;
 }
 
+.ex-addr-label {
+  align-self: center;
+  padding: 0 3px 0 6px;
+  font-size: 11px;
+  color: var(--text);
+}
+
 /* Breadcrumb address bar: every segment is a button. */
 .ex-trail {
   flex: 1;
   min-width: 0;
+  min-height: 24px;
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 3px 6px;
+  gap: 1px;
+  padding: 1px 4px;
   background: #fff;
   border: 1px solid #7f9db9;
   box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.12);
@@ -59,14 +81,26 @@
   display: none;
 }
 
+.ex-addr-icon {
+  display: flex;
+  line-height: 0;
+  padding-right: 3px;
+}
+
+.ex-addr-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
 .ex-crumb {
-  font-size: 12px;
-  padding: 2px 6px;
+  font-size: 11px;
+  padding: 1px 5px;
   border-radius: 2px;
   background: none;
   border: 1px solid transparent;
   color: var(--chrome);
   white-space: nowrap;
+  line-height: 1.5;
 }
 
 .ex-crumb:hover {
@@ -81,13 +115,32 @@
 
 .ex-sep {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
+}
+
+/* Column headings, aligned with the rows below. */
+.ex-head {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  height: 19px;
+  padding: 0 6px;
+  font-size: 11px;
+  color: #333;
+  background: #fff;
+  border-bottom: 1px solid #d4d0c8;
+}
+
+.ex-head-meta {
+  justify-self: end;
 }
 
 .ex-list {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0;
+  padding: 2px 0;
 }
 
 /*
@@ -96,41 +149,50 @@
  */
 .ex-row {
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  padding: 4px 8px;
+  gap: 6px;
+  min-height: 24px;
+  padding: 1px 6px;
   text-align: left;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 2px;
+  border: 1px dotted transparent;
+  border-radius: 0;
   content-visibility: auto;
-  contain-intrinsic-size: auto 44px;
+  contain-intrinsic-size: auto 24px;
 }
 
 .ex-row:hover {
-  background: #eaf3ff;
-  border-color: #b5cfe8;
+  background: #316ac5;
+  color: #fff;
+  border-color: #316ac5;
+}
+
+.ex-row:hover .ex-cell-meta {
+  color: #dbe8ff;
 }
 
 .ex-cell-icon {
-  width: 32px;
-  height: 32px;
+  width: 18px;
+  height: 18px;
   display: grid;
   place-items: center;
   color: var(--chrome-dark);
 }
 
+.ex-cell-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* Only real thumbnails get the framed box; a glyph stands on its own. */
 .ex-thumb {
-  width: 32px;
-  height: 32px;
+  width: 18px;
+  height: 18px;
   display: block;
   object-fit: cover;
   background: #fff;
   border: 1px solid #c3cede;
-  border-radius: 2px;
   flex: none;
 }
 
@@ -139,13 +201,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .ex-cell-meta {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
   white-space: nowrap;
+  padding-right: 2px;
 }
 
 .ex-note {
@@ -156,12 +219,12 @@
 .ex-skeleton {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 10px 8px;
+  gap: 6px;
+  padding: 8px;
 }
 
 .ex-skel-row {
-  height: 26px;
+  height: 16px;
   background: #e2e6ee;
   animation: ex-pulse 1.1s ease-in-out infinite;
 }
@@ -186,27 +249,68 @@
   }
 }
 
-@media (max-width: 767px) {
+/* Phones: icon-only navigation and comfy 44px rows. */
+@media (max-width: 480px) {
+  .explorer {
+    padding: 4px;
+  }
+
   .ex-nav {
     width: 44px;
-    height: 44px;
+    min-height: 44px;
+    flex-direction: row;
+  }
+
+  .ex-nav-label {
+    display: none;
+  }
+
+  .ex-addr-label {
+    display: none;
   }
 
   .ex-trail {
-    padding: 6px;
-    font-size: 14px;
+    min-height: 44px;
+    padding: 4px 6px;
   }
 
   .ex-crumb {
     font-size: 14px;
-    padding: 11px 8px;
+    padding: 10px 8px;
   }
 
-  .ex-cell-meta {
+  .ex-head {
     display: none;
   }
 
   .ex-row {
     grid-template-columns: 32px minmax(0, 1fr);
+    min-height: 44px;
+    gap: 10px;
+    padding: 4px 8px;
+  }
+
+  .ex-cell-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ex-cell-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .ex-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+  }
+
+  .ex-cell-name {
+    font-size: 13px;
+  }
+
+  .ex-cell-meta {
+    display: none;
   }
 }

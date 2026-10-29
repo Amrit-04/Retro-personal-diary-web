@@ -7,7 +7,7 @@
 import '../styles/taskbar.css';
 import { h, setText } from '../lib/dom';
 import {
-  explorerIconSvg,
+  folderIconSvg,
   logOffIconSvg,
   mutedIconSvg,
   newEntryIconSvg,
@@ -38,7 +38,7 @@ export function mountTaskbar(options: TaskbarOptions): HTMLElement {
     'aria-label': 'Start',
     'aria-haspopup': 'true',
     'aria-expanded': 'false',
-  }, [h('span', { class: 'tb-start-mark', html: startMarkSvg() }), 'Start']);
+  }, [h('span', { class: 'tb-start-mark', html: startMarkSvg() }), 'start']);
 
   const buttons = h('div', { class: 'taskbtns', role: 'toolbar', 'aria-label': 'Open windows' });
 
@@ -71,8 +71,8 @@ export function mountTaskbar(options: TaskbarOptions): HTMLElement {
   });
 
   function openMenu(): void {
-    const items: HTMLElement[] = [
-      menuItem('File Explorer', explorerIconSvg(), () => {
+    const main: HTMLElement[] = [
+      menuItem('File Explorer', folderIconSvg(), 'Years, months and entries', () => {
         closeMenu();
         options.onOpenExplorer();
       }),
@@ -81,44 +81,54 @@ export function mountTaskbar(options: TaskbarOptions): HTMLElement {
     // The claim only decides visibility; firestore.rules decides what is allowed.
     if (options.session.hasAdminClaim && options.onNewEntry) {
       const open = options.onNewEntry;
-      items.push(menuItem('New Entry', newEntryIconSvg(), () => {
+      main.push(menuItem('New Entry', newEntryIconSvg(), "Write today's page", () => {
         closeMenu();
         open();
       }));
     }
-
-    items.push(menuItem('Log Off', logOffIconSvg(), () => {
-      closeMenu();
-      void logOffDialog(options);
-    }));
 
     menu = h('div', { class: 'start-menu', role: 'menu', 'aria-label': 'Start menu' }, [
       h('div', { class: 'sm-head' }, [
         h('span', { class: 'sm-avatar', html: userAvatarSvg() }),
         h('span', { class: 'sm-name' }, options.session.name),
       ]),
-      h('div', { class: 'sm-items' }, items),
+      h('div', { class: 'sm-body' }, [
+        h('div', { class: 'sm-main' }, main),
+        h('div', { class: 'sm-side' }, [
+          sideItem('Log Off', logOffIconSvg(), () => {
+            closeMenu();
+            void logOffDialog(options);
+          }),
+          sideItem('Restart', restartIconSvg(), () => {
+            closeMenu();
+            options.onRestart();
+          }),
+        ]),
+      ]),
       h('div', { class: 'sm-foot' }, [
-        h('button', { class: 'sm-exit', type: 'button', onclick: () => { closeMenu(); void logOffDialog(options); } },
-          [h('span', { html: logOffIconSvg() }), 'Log Off']),
-        h('button', { class: 'sm-exit', type: 'button', onclick: () => { closeMenu(); options.onRestart(); } },
-          [h('span', { html: restartIconSvg() }), 'Restart']),
+        h('span', { class: 'sm-foot-brand' }, 'Diary XP'),
+        h('span', { class: 'sm-foot-user' }, options.session.name),
       ]),
     ]);
 
     document.body.appendChild(menu);
     startButton.setAttribute('aria-expanded', 'true');
     // Deferred so the click that opened the menu does not immediately close it.
-    requestAnimationFrame(() => document.addEventListener('click', closeMenu));
+    requestAnimationFrame(() => {
+      document.addEventListener('click', closeMenu);
+      menu?.querySelector<HTMLElement>('.sm-item, .sm-side-item')?.focus({ preventScroll: true });
+    });
     document.addEventListener('keydown', onMenuKey);
   }
 
   function closeMenu(): void {
+    const hadFocus = menu?.contains(document.activeElement);
     menu?.remove();
     menu = null;
     startButton.setAttribute('aria-expanded', 'false');
     document.removeEventListener('click', closeMenu);
     document.removeEventListener('keydown', onMenuKey);
+    if (hadFocus) startButton.focus({ preventScroll: true });
   }
 
   const onMenuKey = (event: KeyboardEvent) => {
@@ -128,10 +138,20 @@ export function mountTaskbar(options: TaskbarOptions): HTMLElement {
   return taskbar;
 }
 
-function menuItem(label: string, icon: string, onSelect: () => void): HTMLElement {
+function menuItem(label: string, icon: string, description: string, onSelect: () => void): HTMLElement {
   return h('button', { class: 'sm-item', type: 'button', role: 'menuitem', onclick: onSelect }, [
     h('span', { class: 'sm-icon', html: icon }),
-    h('span', {}, label),
+    h('span', { class: 'sm-text' }, [
+      h('span', { class: 'sm-title' }, label),
+      h('span', { class: 'sm-desc' }, description),
+    ]),
+  ]);
+}
+
+function sideItem(label: string, icon: string, onSelect: () => void): HTMLElement {
+  return h('button', { class: 'sm-side-item', type: 'button', role: 'menuitem', onclick: onSelect }, [
+    h('span', { html: icon }),
+    label,
   ]);
 }
 

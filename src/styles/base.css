@@ -30,7 +30,7 @@
   --font-ui: Tahoma, Verdana, "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, "Lucida Console", Consolas, "Courier New", monospace;
 
-  --taskbar-height: 34px;
+  --taskbar-height: 30px;
   --radius-win: 6px;
 }
 
@@ -57,12 +57,33 @@ body {
 
 body {
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.45;
   color: var(--text);
   user-select: none;
   -webkit-user-select: none;
   overscroll-behavior: none;
+}
+
+/* Slim blue scrollbars, the way desktop windows of this era looked. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8fb0d8 #f1efe2;
+}
+
+.win-body::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+.win-body::-webkit-scrollbar-track {
+  background: #f1efe2;
+  border-left: 1px solid #d4d0c8;
+}
+
+.win-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(to right, #e4edf9, #b3cae9 45%, #8fb0d8);
+  border: 1px solid #7f9db9;
 }
 
 /* Text the user may want to copy: entry bodies and form fields. */
@@ -81,9 +102,9 @@ button {
 
 /* Classic beveled push button. */
 .btn {
-  min-height: 30px;
-  padding: 4px 14px;
-  font-size: 13px;
+  min-height: 24px;
+  padding: 2px 12px;
+  font-size: 12px;
   color: #000;
   background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 60%, #d8d4c4 100%);
   border: 1px solid #003c74;
@@ -114,8 +135,8 @@ button {
 }
 
 .btn-primary {
-  min-height: 44px;
-  padding: 8px 20px;
+  min-height: 28px;
+  padding: 4px 18px;
   font-weight: 700;
   color: #fff;
   background: linear-gradient(to bottom, #3f8ee8 0%, #1f5fbf 60%, #14478f 100%);
@@ -130,9 +151,9 @@ button {
 
 /* Compact variant for inline notes and previews. */
 .btn-mini {
-  min-height: 30px;
-  padding: 2px 12px;
-  font-size: 12px;
+  min-height: 22px;
+  padding: 1px 8px;
+  font-size: 11px;
 }
 
 /* Inset white panel, used by inputs and list backgrounds. */
@@ -146,13 +167,12 @@ input,
 textarea,
 select {
   font: inherit;
-  /* 16px keeps iOS Safari from zooming on focus. */
-  font-size: 16px;
+  font-size: 13px;
   color: var(--text);
   background: #fff;
   border: 1px solid #7f9db9;
   border-radius: 2px;
-  padding: 8px 10px;
+  padding: 3px 6px;
 }
 
 textarea {
@@ -213,5 +233,38 @@ button:focus-visible,
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* Touch keyboards: 16px fields keep iOS Safari from zooming on focus. */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+/* Phones: 44px controls once the layout becomes a full-screen sheet. */
+@media (max-width: 480px) {
+  .btn {
+    min-height: 44px;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .btn-mini {
+    min-height: 36px;
+  }
+
+  .btn-primary {
+    min-height: 44px;
+    padding: 8px 20px;
+  }
+
+  input,
+  textarea,
+  select {
+    padding: 9px 10px;
   }
 }

@@ -1,4 +1,8 @@
-/* Desktop: flat wallpaper, icons flowing in columns from the top-left. */
+/*
+ * Desktop: an original landscape drawn for this project — blue sky, soft clouds
+ * and a rolling hill. It is a 1.6 KB SVG, not a photograph, so it stays sharp on
+ * every screen and costs almost nothing to paint.
+ */
 
 #app {
   height: 100dvh;
@@ -7,8 +11,24 @@
 .desktop {
   position: absolute;
   inset: 0;
-  background: var(--desktop);
   overflow: hidden;
+  background: #2f6fb4 url('/wallpaper.svg') center bottom / cover no-repeat;
+}
+
+/* A quiet system watermark, the way a desktop of this era signed itself. */
+.desktop::after {
+  content: 'Diary XP';
+  position: absolute;
+  right: 16px;
+  bottom: calc(12px + var(--taskbar-height));
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: rgba(255, 255, 255, 0.6);
+  text-shadow: 0 1px 3px rgba(0, 32, 70, 0.55);
+  pointer-events: none;
+  user-select: none;
 }
 
 .desk-icons {
@@ -16,38 +36,43 @@
   top: calc(10px + env(safe-area-inset-top));
   left: 10px;
   right: 10px;
-  bottom: calc(10px + var(--taskbar-height));
+  bottom: calc(12px + var(--taskbar-height));
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   align-content: flex-start;
-  gap: 6px 4px;
+  gap: 4px;
   max-height: calc(100% - 4px);
 }
 
 .desk-icon {
-  width: 88px;
-  min-height: 88px;
-  padding: 6px 4px 6px;
+  width: 100px;
+  min-height: 92px;
+  padding: 6px 4px 5px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
   background: none;
   border: 1px solid transparent;
-  border-radius: 3px;
+  border-radius: 2px;
   color: #fff;
   text-align: center;
 }
 
 .desk-icon:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(49, 106, 197, 0.28);
+  border-color: rgba(255, 255, 255, 0.42);
+}
+
+.desk-icon:active {
+  background: rgba(49, 106, 197, 0.5);
 }
 
 .desk-icon:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: -2px;
+  outline: none;
+  background: rgba(49, 106, 197, 0.45);
+  border: 1px dotted #fff;
 }
 
 .desk-icon-art,
@@ -56,61 +81,87 @@
   height: 64px;
   display: grid;
   place-items: center;
-  /* Reserving the box before the image arrives is what keeps CLS at zero. */
-  background: rgba(0, 0, 0, 0.08);
   border-radius: 3px;
   overflow: hidden;
   line-height: 0;
 }
 
+/* Our own icons float on the wallpaper with a soft shadow, as system icons do. */
+.desk-icon-art {
+  background: none;
+  filter: drop-shadow(0 2px 3px rgba(0, 24, 60, 0.45));
+}
+
 .desk-icon-art svg {
-  width: 48px;
-  height: 48px;
+  width: 54px;
+  height: 54px;
+}
+
+/* A doodle thumbnail gets a photo-print frame, not a placeholder box. */
+.desk-icon-thumb {
+  background: #fff;
+  border: 1px solid #2b4c73;
+  box-shadow: 0 2px 4px rgba(0, 24, 60, 0.35);
 }
 
 .desk-thumb {
-  width: 64px;
-  height: 64px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
 
 .thumb-fallback svg {
-  width: 56px;
-  height: 56px;
+  width: 50px;
+  height: 50px;
 }
 
 .desk-icon-label {
-  font-size: 12px;
+  max-width: 96px;
+  padding: 0 3px;
+  font-size: 11px;
   line-height: 1.25;
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 0 2px #000, 1px 1px 2px rgba(0, 0, 0, 0.9);
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   word-break: break-word;
-  max-width: 84px;
 }
 
+.desk-icon:focus-visible .desk-icon-label,
+.desk-icon:active .desk-icon-label {
+  background: #316ac5;
+  text-shadow: none;
+}
+
+/* A desktop message is a small paper note, not a translucent overlay. */
 .desk-note {
   align-self: flex-start;
   margin-left: 4px;
-  padding: 6px 10px;
-  font-size: 13px;
-  color: #eef4ff;
-  background: rgba(0, 0, 0, 0.28);
+  padding: 10px 12px;
+  max-width: 300px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text);
+  background: #fffbe8;
+  border: 1px solid #b99a4b;
   border-radius: 3px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   display: flex;
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
-  max-width: 280px;
 }
 
-/* Phones: a comfortable 3-4 column grid instead of flowing columns. */
-@media (max-width: 767px) {
+/* Phones: a comfortable grid instead of flowing columns. */
+@media (max-width: 480px) {
+  .desktop::after {
+    display: none;
+  }
+
   .desk-icons {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
