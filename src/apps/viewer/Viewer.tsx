@@ -9,6 +9,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { getEntry, type Entry } from '../../firebase/entries';
 import { longDate } from '../../lib/dates';
+import { fileName } from '../../lib/slug';
 import { XpIcon } from '../../shell/icons';
 import { setTitle, type WindowBodyProps } from '../../shell/windows';
 import './viewer.css';
@@ -34,7 +35,7 @@ export function Viewer({ win }: WindowBodyProps) {
         if (!alive) return;
         setState(entry ? { kind: 'ready', entry } : { kind: 'missing' });
         // The title bar shows the filename, which the document is the only place that knows.
-        if (entry) setTitle(win.id, `${entry.title.slice(0, 40)}.txt`);
+        if (entry) setTitle(win.id, fileName(entry.title));
       })
       .catch(() => {
         if (alive) setState({ kind: 'error' });

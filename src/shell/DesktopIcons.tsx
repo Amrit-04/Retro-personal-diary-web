@@ -1,10 +1,10 @@
 /**
- * The desktop icon column: the programs, then one icon per diary entry from the last
- * seven days, newest first. No placeholders for empty days — a diary is not a grid.
+ * The desktop icons: the programs, then one icon per diary entry from the last seven
+ * days, newest first. No placeholders for empty days — a diary is not a grid.
  *
- * A single tap opens, on every device. The thumbnail is the icon and the slugified
- * filename is the label, which is what makes it read like a folder of files rather
- * than a list of posts.
+ * The cells are the reference's (`Icons/index.js`): 70px wide, 30px of art, a 10px
+ * two-line label, a 30px gap. A single tap opens, on every device, so the selection
+ * highlight is only ever momentary.
  */
 import { useEffect, useState } from 'preact/hooks';
 import { fileName } from '../lib/slug';
@@ -48,45 +48,60 @@ export function DesktopIcons() {
   ];
 
   return (
-    <div class="desk-icons" onPointerDown={(event) => {
-      // Empty desktop deselects; an icon stops propagation itself.
-      if ((event.target as HTMLElement).closest('.desk-icon')) return;
-      setSelected(null);
-    }}>
-      {items.map((item) => (
-        <button
-          class={`desk-icon${selected === item.key ? ' is-selected' : ''}`}
-          type="button"
-          key={item.key}
-          onPointerDown={() => setSelected(item.key)}
-          onClick={() => {
-            setSelected(item.key);
-            item.open();
-          }}
-        >
-          <span class="desk-icon-image">
-            {item.thumb ? (
-              <img src={item.thumb} width={30} height={30} alt="" loading="lazy" decoding="async" />
-            ) : (
-              <XpIcon name={item.icon} size={30} />
-            )}
-          </span>
-          <span class="desk-icon-label">{item.label}</span>
-        </button>
-      ))}
+    <>
+      <div
+        class="icons"
+        onPointerDown={(event) => {
+          // Empty desktop deselects; an icon stops propagation itself.
+          if ((event.target as HTMLElement).closest('.icon')) return;
+          setSelected(null);
+        }}
+      >
+        {items.map((item) => (
+          <button
+            class={`icon${selected === item.key ? ' is-selected' : ''}`}
+            type="button"
+            key={item.key}
+            onPointerDown={() => setSelected(item.key)}
+            onClick={() => {
+              setSelected(item.key);
+              item.open();
+            }}
+          >
+            <span class="icon__img__container">
+              {item.thumb ? (
+                <img
+                  class="icon__img"
+                  src={item.thumb}
+                  width={30}
+                  height={30}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <XpIcon name={item.icon} size={30} />
+              )}
+            </span>
+            <span class="icon__text__container">
+              <span class="icon__text">{item.label}</span>
+            </span>
+          </button>
+        ))}
+      </div>
 
       {recentError.value ? (
-        <span class="desk-note">
+        <p class="desk-note">
           {recentError.value}{' '}
           <button class="desk-link" type="button" onClick={retryRecent}>
             Retry
           </button>
-        </span>
-      ) : recent.value === null ? (
-        <p class="desk-note">Opening your diary…</p>
-      ) : (
-        entries.length === 0 && <p class="desk-note">Nothing written in the last seven days.</p>
+        </p>
+      ) : recent.value === null ? null : (
+        entries.length === 0 && (
+          <p class="desk-note">Nothing written in the last seven days. Open New Entry to start one.</p>
+        )
       )}
-    </div>
+    </>
   );
 }

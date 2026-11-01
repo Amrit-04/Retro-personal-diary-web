@@ -211,7 +211,8 @@ async function afterSignIn(api: AuthApi): Promise<void> {
   if (phase.value === 'desktop') return;
   phase.value = 'welcome';
   playStartup();
-  await sleep(reduced ? 200 : 900);
+  // Same hold as enterWelcome(): the brief buys the startup sound 1.5-2s.
+  await sleep(WELCOME_MS);
   phase.value = 'desktop';
 }
 

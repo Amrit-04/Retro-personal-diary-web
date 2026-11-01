@@ -48,7 +48,7 @@ function App() {
   if (current === 'bios') return <Bios />;
 
   // Same tab, already animated: a plain field while the session resolves.
-  return <div class="boot" style={{ background: 'var(--splash-face)' }} />;
+  return <div class="boot" style={{ background: '#003399' }} />;
 }
 
 const root = document.getElementById('app');

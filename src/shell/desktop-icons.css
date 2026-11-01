@@ -1,83 +1,111 @@
 /**
- * Desktop icons: 70px cells, a 30px image, a two-line 10px label, and the Luna
- * selection treatment. On a phone they become a 4-column grid that scrolls, which is
- * the only place the desktop layout differs at all.
+ * Desktop icons, copied from ShizukuIchi/winXP (MIT — see ATTRIBUTIONS.md):
+ * src/WinXP/Icons/index.js. The BEM classes the reference builds with template
+ * strings (&__text, &__img) are written out here as `.icon__text` and so on; the
+ * numbers — 70px cell, 30px art, 10px label, 30px gap, 40px inset — are untouched.
+ *
+ * XP flowed icons into columns from the top-left; the reference only ever showed a
+ * single column. The flex column-wrap below restores that behaviour without
+ * changing a single icon measurement.
  */
-@import '../styles/tokens.css';
 
-.desk-icons {
+.icons {
   position: absolute;
-  top: var(--desktop-inset);
-  left: var(--desktop-inset);
-  bottom: calc(var(--taskbar-height) + 12px);
+  top: 0;
+  left: 0;
+  margin-top: 40px;
+  margin-left: 40px;
+  height: calc(100% - 40px);
   display: flex;
   flex-flow: column wrap;
   align-content: flex-start;
-  gap: var(--icon-gutter) 2px;
-  /* Icons keep their own paint layer: a window drag never repaints them. */
   contain: layout paint;
 }
 
-.desk-icon {
-  width: var(--icon-width);
+.icon {
+  width: 70px;
+  margin-bottom: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 4px 2px;
-  border-radius: 3px;
   color: #fff;
   text-align: center;
 }
 
-.desk-icon:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.desk-icon-image {
+.icon__text__container {
+  width: 100%;
+  font-size: 10px;
+  color: white;
+  text-shadow: 0 1px 1px black;
+  margin-top: 5px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  width: var(--icon-image);
-  height: var(--icon-image);
 }
 
-.desk-icon-image img {
-  width: var(--icon-image);
-  height: var(--icon-image);
+.icon__text__container::before {
+  content: '';
+  display: block;
+  flex-grow: 1;
+}
+
+.icon__text__container::after {
+  content: '';
+  display: block;
+  flex-grow: 1;
+}
+
+.icon__text {
+  padding: 0 3px 2px;
+  background-color: transparent;
+  text-align: center;
+  flex-shrink: 1;
+}
+
+.icon.is-selected .icon__text {
+  background-color: #0b61ff;
+}
+
+.icon__img__container {
+  width: 30px;
+  height: 30px;
+}
+
+.icon.is-selected .icon__img__container {
+  filter: drop-shadow(0 0 2px #00f);
+}
+
+.icon__img {
+  width: 30px;
+  height: 30px;
+  opacity: 1;
   object-fit: cover;
-  border-radius: 2px;
 }
 
-.desk-icon-label {
-  font-size: var(--size-icon-label);
-  line-height: 1.2;
-  max-height: 2.4em;
-  overflow: hidden;
-  text-shadow: 0 1px 1px #000;
-  /* Filenames have no spaces to break on. */
+.icon__img__container > .xp-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.icon.is-selected .icon__img {
+  opacity: 0.5;
+}
+
+/* ---- beyond the reference: long filenames, and the phone grid ---- */
+
+.icon__text {
   overflow-wrap: anywhere;
 }
 
-.desk-icon.is-selected .desk-icon-label {
-  background: var(--xp-selection);
-  color: var(--xp-selection-text);
-  outline: 1px dotted #ffff80;
-}
-
-.desk-icon.is-selected .desk-icon-image {
-  opacity: 0.5;
-  filter: drop-shadow(0 0 3px #40a0ff);
-}
-
 .desk-note {
+  position: absolute;
+  left: 40px;
+  bottom: 12px;
   margin: 0;
-  width: 168px;
-  height: 100%;
+  max-width: 220px;
   font-size: 11px;
-  line-height: 1.4;
+  line-height: 1.45;
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
 }
 
 .desk-link {
@@ -87,29 +115,36 @@
 }
 
 @media (max-width: 767px) {
-  .desk-icons {
+  .icons {
     top: 10px;
     left: 6px;
     right: 6px;
-    bottom: calc(var(--taskbar-height) + 10px + env(safe-area-inset-bottom));
+    height: auto;
+    margin: 0;
+    padding-bottom: 12px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
-    gap: 6px 2px;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 10px 0;
     align-content: start;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  .desk-icon {
-    /* 44px tap target minimum, met by the cell itself rather than the glyph. */
+  .icon {
+    /* The cell itself is the 44px tap target, not just the glyph. */
+    width: auto;
     min-height: var(--touch-target);
-    justify-content: flex-start;
+    margin-bottom: 0;
+  }
+
+  .icon__text__container {
+    font-size: 11px;
   }
 
   .desk-note {
-    grid-column: 1 / -1;
-    width: auto;
-    height: auto;
-    padding: 6px 4px;
+    left: 10px;
+    right: 10px;
+    bottom: calc(var(--taskbar-height) + 14px);
+    max-width: none;
   }
 }

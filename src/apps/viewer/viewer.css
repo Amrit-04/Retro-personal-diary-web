@@ -1,14 +1,19 @@
 /**
  * Reading layout: one column of plain text, 17px with a 1.6 leading, capped at 65
- * characters so a wide window never turns into a wall of type. The image is lazy and
- * carries dimensions from the pipeline's 800px long edge so the text below it does not
- * jump when it lands.
+ * characters so a wide window never turns into a wall of type.
+ *
+ * The photo has a 4:3 frame and `object-fit: contain`. The document format has no
+ * width/height fields, so this is the only way to reserve the box before the image
+ * arrives: the text below never jumps, and a photo of any shape letterboxes inside the
+ * frame instead of being cropped. The window opens tall enough to show frame + text.
  */
 @import '../../styles/tokens.css';
 
 .viewer {
   flex: 1;
   min-width: 0;
+  /* A flex item defaults to min-height:auto and then grows past its window frame. */
+  min-height: 0;
   display: flex;
   background: var(--xp-face);
 }
@@ -16,9 +21,13 @@
 .viewer-scroll {
   flex: 1;
   min-width: 0;
+  min-height: 0;
+  /* Only the reading column scrolls, and only downwards: a stray pixel must never
+     put a horizontal bar across the page. */
+  overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 14px 18px 26px;
+  padding: 14px 18px 20px;
 }
 
 .viewer-title {
@@ -40,12 +49,14 @@
 
 .viewer-photo {
   display: block;
-  max-width: 100%;
+  width: 100%;
   height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
   margin: 0 0 14px;
   border: 1px solid #c3ccd9;
   border-radius: 2px;
-  background: #f2f5f9;
+  background: #eef2f7;
 }
 
 .viewer-text {

@@ -1,21 +1,22 @@
 /**
- * The Start menu: the programs on the left, the last week's entries on the right,
- * and Log Off / Restart in the footer band.
+ * The Start menu: the programs on the left, the last seven days on the right, and
+ * Log Off in the footer band.
  *
- * It is a plain absolutely-positioned panel above the taskbar — no portal, no
- * stacking context trick — and the desktop's own pointerdown closes it, which is how
- * XP behaves when you click anywhere else.
+ * The structure, class names and geometry are the reference's
+ * (`Footer/FooterMenu.js`): a 54px gradient header, a white 190px program column, a
+ * light blue 190px shortcut column split by the orange rule, and a 36px footer.
+ * The submenu machinery is gone with the apps it opened.
  */
 import { useEffect } from 'preact/hooks';
 import { signal } from '@preact/signals';
-import { restart, session } from '../boot/machine';
+import { session } from '../boot/machine';
+import { shortDate } from '../lib/dates';
 import { fileName } from '../lib/slug';
 import { showLogOff } from './dialogs';
 import { launch } from './launch';
 import { loadRecent, recent } from './recent';
-import { XpIcon } from './icons';
-import { LogoMark } from './marks';
-import './startmenu.css';
+import { XpIcon, type IconName } from './icons';
+import './footer-menu.css';
 
 export const startOpen = signal(false);
 
@@ -42,72 +43,106 @@ export function StartMenu() {
   };
 
   return (
-    <div class="sm" onPointerDown={(event) => event.stopPropagation()} role="menu" aria-label="Start">
-      <div class="sm-head">
-        <span class="sm-avatar">
-          {user?.photoURL ? (
-            <img src={user.photoURL} width={42} height={42} alt="" referrerPolicy="no-referrer" />
-          ) : (
+    <div
+      class="footer-menu"
+      role="menu"
+      aria-label="Start"
+      onPointerDown={(event) => event.stopPropagation()}
+    >
+      <header>
+        {user?.photoURL ? (
+          <img class="header__img" src={user.photoURL} alt="" referrerPolicy="no-referrer" />
+        ) : (
+          <span class="header__img header__img--icon">
             <XpIcon name="user" size={38} />
-          )}
-        </span>
-        <span class="sm-name">{user?.name ?? 'Owner'}</span>
-        <span class="sm-mark">
-          <LogoMark size={22} />
-        </span>
-      </div>
+          </span>
+        )}
+        <span class="header__text">{user?.name ?? 'Owner'}</span>
+      </header>
 
-      <div class="sm-body">
-        <div class="sm-left">
-          <button class="sm-item" type="button" role="menuitem" onClick={pick(() => launch('explorer'))}>
-            <XpIcon name="folder" size={30} />
-            <span>File Explorer</span>
-          </button>
-          <button class="sm-item" type="button" role="menuitem" onClick={pick(() => launch('minesweeper'))}>
-            <XpIcon name="mine" size={30} />
-            <span>Minesweeper</span>
-          </button>
+      <section class="menu">
+        <hr class="orange-hr" />
+
+        <div class="menu__left">
+          <MenuItem
+            icon="folder"
+            label="File Explorer"
+            onPick={pick(() => launch('explorer'))}
+          />
+          <MenuItem
+            icon="mine"
+            label="Minesweeper"
+            onPick={pick(() => launch('minesweeper'))}
+          />
           {isAdmin && (
-            <button class="sm-item" type="button" role="menuitem" onClick={pick(() => launch('editor'))}>
-              <XpIcon name="notepad" size={30} />
-              <span>New Entry</span>
-            </button>
+            <MenuItem icon="notepad" label="New Entry" onPick={pick(() => launch('editor'))} />
           )}
-          <span class="sm-sep sm-sep--left" />
-          <p class="sm-hint">Newest entries sit on the desktop. Everything older is in File Explorer.</p>
         </div>
 
-        <div class="sm-right">
+        <div class="menu__right">
           {entries.map((entry) => (
             <button
-              class="sm-item sm-item--side"
+              class="menu__item menu__item--entry"
               type="button"
               key={entry.date}
               role="menuitem"
               onClick={pick(() => launch('viewer', { date: entry.date, title: entry.title }))}
             >
-              {entry.thumbUrl || entry.imageUrl ? (
-                <img class="sm-thumb" src={entry.thumbUrl || entry.imageUrl} width={22} height={22} alt="" />
-              ) : (
-                <XpIcon name="text" size={22} />
-              )}
-              <span>{fileName(entry.title)}</span>
+              <span class="menu__item__img">
+                {entry.thumbUrl || entry.imageUrl ? (
+                  <img
+                    class="menu__thumb"
+                    src={entry.thumbUrl || entry.imageUrl}
+                    width={22}
+                    height={22}
+                    alt=""
+                    loading="lazy"
+                  />
+                ) : (
+                  <XpIcon name="text" size={22} />
+                )}
+              </span>
+              <span class="menu__item__texts">
+                <span class="menu__item__text">{fileName(entry.title)}</span>
+                <span class="menu__item__subtext">{shortDate(entry.date)}</span>
+              </span>
             </button>
           ))}
-          {entries.length === 0 && <p class="sm-hint sm-hint--side">Nothing written in the last seven days.</p>}
+          {entries.length === 0 && recent.value !== null && (
+            <p class="menu__empty">Nothing written in the last seven days.</p>
+          )}
         </div>
-      </div>
+      </section>
 
-      <div class="sm-foot">
-        <button class="sm-foot-item" type="button" onClick={pick(showLogOff)}>
-          <XpIcon name="logoff" size={22} />
+      <footer>
+        <button class="footer__item" type="button" onClick={pick(showLogOff)}>
+          <span class="footer__item__img">
+            <XpIcon name="logoff" size={22} />
+          </span>
           <span>Log Off</span>
         </button>
-        <button class="sm-foot-item" type="button" onClick={pick(restart)}>
-          <XpIcon name="restart" size={22} />
-          <span>Restart</span>
-        </button>
-      </div>
+      </footer>
     </div>
+  );
+}
+
+function MenuItem({
+  icon,
+  label,
+  onPick,
+}: {
+  icon: IconName;
+  label: string;
+  onPick: () => void;
+}) {
+  return (
+    <button class="menu__item" type="button" role="menuitem" onClick={onPick}>
+      <span class="menu__item__img">
+        <XpIcon name={icon} size={30} />
+      </span>
+      <span class="menu__item__texts">
+        <span class="menu__item__text">{label}</span>
+      </span>
+    </button>
   );
 }

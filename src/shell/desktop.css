@@ -50,3 +50,13 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
   pointer-events: none;
 }
+
+@media (max-width: 767px) {
+  /* The phone sheet is 100dvh, so while one is open its layer has to paint over the
+     taskbar (8000). With no sheet the layer drops back below the footer, or it would
+     swallow every tap on the taskbar. Dialogs live outside this layer at 9000. */
+  .desk.has-sheet .desk-area {
+    bottom: 0;
+    z-index: 8500;
+  }
+}

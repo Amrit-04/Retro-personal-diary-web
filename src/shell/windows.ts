@@ -32,6 +32,9 @@ export interface WindowBodyProps {
   win: WindowState;
 }
 
+/** The caption buttons XP draws, in order, right-aligned in the title band. */
+export type CaptionName = 'minimize' | 'maximize' | 'close';
+
 export interface WindowState {
   id: number;
   app: AppId;
@@ -45,6 +48,7 @@ export interface WindowState {
   minimized: boolean;
   maximized: boolean;
   resizable: boolean;
+  captions: CaptionName[];
   minWidth: number;
   minHeight: number;
   props: WindowProps;
@@ -117,6 +121,7 @@ export function open(app: AppId, props: WindowProps = {}): WindowState | null {
     minimized: false,
     maximized: false,
     resizable: spec.resizable,
+    captions: spec.captions ?? ['minimize', 'maximize', 'close'],
     minWidth: spec.minWidth,
     minHeight: spec.minHeight,
     props,

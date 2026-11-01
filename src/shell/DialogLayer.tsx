@@ -1,12 +1,13 @@
 /**
- * Luna dialogs: message boxes (with an optional Retry), confirmations, and the
- * Log Off screen. Mounted above the windows on a dimmed desktop; Esc or Cancel
- * dismisses, Enter takes the default action.
+ * Luna dialogs: message boxes (with an optional Retry), confirmations, and the Log
+ * Off screen. Esc closes; there is no click-outside-to-dismiss, because XP's dialogs
+ * want a choice.
  */
 import { useEffect } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import { closeDialog, dialog, type ConfirmDialog, type MessageDialog } from './dialogs';
 import { XpIcon } from './icons';
+import { LogoMark } from './marks';
 import { logOff, restart } from '../boot/machine';
 import './dialog.css';
 
@@ -58,11 +59,11 @@ function MessageBox({ box }: { box: MessageDialog }) {
   return (
     <DialogFrame title={box.title}>
       <div class="dlg-main">
-        <XpIcon name={box.icon} size={32} />
+        <XpIcon name={box.icon} size={30} />
         <p class="dlg-text">{box.text}</p>
       </div>
       <div class="dlg-actions">
-        <button class="dlg-button dlg-button--default" type="button" onClick={closeDialog}>
+        <button class="dlg-button" type="button" onClick={closeDialog}>
           OK
         </button>
         {box.actionLabel && (
@@ -83,11 +84,11 @@ function ConfirmBox({ box }: { box: ConfirmDialog }) {
   return (
     <DialogFrame title={box.title}>
       <div class="dlg-main">
-        <XpIcon name="question" size={32} />
+        <XpIcon name="question" size={30} />
         <p class="dlg-text">{box.text}</p>
       </div>
       <div class="dlg-actions">
-        <button class="dlg-button dlg-button--default" type="button" onClick={accept}>
+        <button class="dlg-button" type="button" onClick={accept}>
           {box.yesLabel}
         </button>
         <button class="dlg-button" type="button" onClick={closeDialog}>
@@ -98,33 +99,30 @@ function ConfirmBox({ box }: { box: ConfirmDialog }) {
   );
 }
 
+/**
+ * The power screen from the reference: a 300x190 box, a navy header with the
+ * product mark where the Windows logo sat, two big actions on the gradient, and a
+ * small Cancel in the footer.
+ */
 function LogOffDialog() {
   return (
     <div class="dlg dlg--logoff" role="alertdialog" aria-modal="true" aria-label="Log off">
       <div class="dlg-band">
-        <span>Log off Diary XP</span>
-        <button class="dlg-x dlg-x--band" type="button" onClick={closeDialog} aria-label="Close">
-          <span class="dlg-x-bar" />
-          <span class="dlg-x-bar dlg-x-bar--flip" />
+        <span class="dlg-band__text">Log off Diary XP</span>
+        <LogoMark size={30} />
+      </div>
+
+      <div class="dlg-logoff-body">
+        <button class="dlg-round" type="button" onClick={logOff}>
+          <XpIcon name="logoff" size={30} />
+          <span class="dlg-round__text">Log Off</span>
+        </button>
+        <button class="dlg-round" type="button" onClick={restart}>
+          <XpIcon name="restart" size={30} />
+          <span class="dlg-round__text">Restart</span>
         </button>
       </div>
-      <div class="dlg-logoff-body">
-        <p class="dlg-lead">Are you sure you want to log off your diary?</p>
-        <div class="dlg-round-row">
-          <button class="dlg-round" type="button" onClick={logOff}>
-            <span class="dlg-round-circle">
-              <XpIcon name="logoff" size={20} />
-            </span>
-            <span>Log Off</span>
-          </button>
-          <button class="dlg-round" type="button" onClick={restart}>
-            <span class="dlg-round-circle">
-              <XpIcon name="restart" size={20} />
-            </span>
-            <span>Restart</span>
-          </button>
-        </div>
-      </div>
+
       <div class="dlg-band dlg-band--foot">
         <button class="dlg-button" type="button" onClick={closeDialog}>
           Cancel

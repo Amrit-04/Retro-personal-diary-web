@@ -1,142 +1,33 @@
 /**
- * Every value in this file was read out of a real XP surface, not eyeballed:
- * the CSS of the ShizukuIchi/winXP reference (styled-components converted to plain
- * CSS) and screenshots measured at 1440x900. Component stylesheets import these
- * tokens and never repeat a magic number.
- *
- * Anything the brief forbids — the literal "Windows XP" wordmark, the flag logo,
- * Microsoft's own art — is absent by construction; those two marks are drawn in
- * src/shell/marks.tsx.
+ * The few values more than one file has to agree on. Everything else — the window
+ * gradients, the taskbar's sixteen stops, the Start menu's 190px columns — lives
+ * next to the rule that uses it, because those declarations are copied from the
+ * reference and a copy reads better beside its source than behind a token lookup.
  */
 
 :root {
-  /* ---- Typeface stack: no web fonts, ever. ---- */
   --font-ui: Tahoma, Verdana, 'DejaVu Sans', system-ui, sans-serif;
   --font-title: 'Trebuchet MS', Tahoma, Verdana, system-ui, sans-serif;
-  --font-poster: 'Franklin Gothic Medium', 'Trebuchet MS', Tahoma, Verdana, sans-serif;
   --size-ui: 11px;
-  --size-title: 12px;
-  --size-clock: 11px;
-  --size-icon-label: 10px;
-  --size-body: 16px;
 
-  /* ---- Luna blue, as measured. ---- */
-  --xp-blue-frame: #0831d9;
-  --xp-blue-frame-blurred: #6582f5;
-  --xp-title-start: #0058ee;
-  --xp-accent: #2a6ad4;
-  --xp-selection: #0b61ff;
-  --xp-selection-text: #ffffff;
   --xp-face: #ffffff;
   --xp-face-text: #000000;
-  --xp-menu-face: #ffffff;
-  --xp-menu-side: #cbe3ff;
-  --xp-menu-side-text: #00136b;
-  --xp-menu-hover: #2f71cd;
-  --xp-menu-hover-text: #ffffff;
-  --xp-sunken: #7f9db9;
-  --xp-raised: #e3e3e2;
+  --xp-blue-frame: #0831d9;
   --xp-desktop-empty: #0a54c9;
-
-  /* ---- Window chrome. ---- */
-  --window-frame-pad: 3px;
-  --window-radius-top: 8px;
-  --titlebar-height: 25px;
-  --titlebar-band: 28px;
-  --caption-size: 22px;
-
   --grad-title-active: linear-gradient(
     to bottom,
     #0058ee 0%, #3593ff 4%, #288eff 6%, #127dff 8%, #036ffc 10%, #0262ee 14%,
     #0057e5 20%, #0054e3 24%, #0055eb 56%, #005bf5 66%, #026afe 76%, #0062ef 86%,
     #0052d6 92%, #0040ab 94%, #003092 100%
   );
-  --grad-title-inactive: linear-gradient(
-    to bottom,
-    #7697e7 0%, #7e9ee3 3%, #94afe8 6%, #97b4e9 8%, #82a5e4 14%, #7c9fe2 17%,
-    #7996de 25%, #7b99e1 56%, #82a9e9 81%, #80a5e7 89%, #7b96e1 94%, #7a93df 97%,
-    #abbae3 100%
-  );
-  --grad-cap-blue: radial-gradient(
-    circle at 90% 90%,
-    #0054e9 0%, #2263d5 55%, #4479e4 70%, #a3bbec 90%, #ffffff 100%
-  );
-  --grad-cap-red: radial-gradient(
-    circle at 90% 90%,
-    #cc4600 0%, #dc6527 55%, #cd7546 70%, #ffccb2 90%, #ffffff 100%
-  );
-  --shadow-cap-blue: inset 0 -1px 2px 1px #4646ff;
-  --shadow-cap-red: inset 0 -1px 2px 1px #da4600;
 
-  /* ---- Taskbar. ---- */
+  /* The 30px desktop bar; phones get 44px so every control clears the tap floor. */
   --taskbar-height: 30px;
-  --grad-taskbar: linear-gradient(
-    to bottom,
-    #1f2f86 0, #3165c4 3%, #3682e5 6%, #4490e6 10%, #3883e5 12%, #2b71e0 15%,
-    #2663da 18%, #235bd6 20%, #2258d5 23%, #2157d6 38%, #245ddb 54%, #2562df 86%,
-    #245fdc 89%, #2158d4 92%, #1d4ec0 95%, #1941a5 98%
-  );
-  --grad-tray: linear-gradient(
-    to bottom,
-    #0b59b9 0%, #0b5bbb 6%, #0d61c8 24%, #0d63cc 38%, #0e66d1 52%, #0e6ad8 72%,
-    #0b51bb 90%, #0a41a8 100%
-  );
-  --grad-start: linear-gradient(
-    to bottom,
-    #3c87f7 0%, #3171dd 9%, #2b62d6 18%, #2a5fd5 23%, #286ee5 36%,
-    #2679f1 51%, #2476eb 76%, #2062ce 87%, #1c4fa9 94%, #183f86 100%
-  );
-  --task-button-height: 22px;
-  --task-button-max-width: 150px;
-  --task-button-face: #3c81f3;
-  --task-button-active: #1e52b7;
-  --task-button-hover: #53a3ff;
-  --shadow-task: inset -1px 0 rgba(0, 0, 0, 0.3), inset 1px 1px 1px rgba(255, 255, 255, 0.2);
-  --shadow-task-active: inset 0 0 1px 1px rgba(0, 0, 0, 0.2), inset 1px 0 1px rgba(0, 0, 0, 0.7);
-
-  /* ---- Start menu. ---- */
-  --startmenu-width: 380px;
-  --startmenu-radius: 5px;
-  --startmenu-header-height: 54px;
-  --startmenu-footer-height: 36px;
-  --startmenu-column: 190px;
-  --startmenu-item-height: 34px;
-  --startmenu-item-height-side: 26px;
-  --grad-startmenu-header: linear-gradient(
-    to bottom,
-    #1868ce 0%, #0e60cb 12%, #0b5cca 25%, #0a5ac8 37%, #0c5ecf 50%,
-    #1268dc 62%, #2076ea 75%, #2e83f0 88%, #4791eb 100%
-  );
-  --grad-startmenu-footer: linear-gradient(
-    to bottom,
-    #4282d6 0%, #3b7cd2 20%, #3678cf 40%, #2f72cb 60%, #2a6dc7 80%, #0f61cb 88%, #0a5ac5 100%
-  );
-  --startmenu-rule: linear-gradient(to right, transparent, #da884a 50%, transparent);
-  --startmenu-separator: linear-gradient(to right, transparent 20%, #9cbeea 50%, transparent 80%);
-
-  /* ---- Log Off / dialog chrome. ---- */
-  --dialog-width: 300px;
-  --dialog-height: 190px;
-  --dialog-band: #092178;
-  --grad-dialog-body: linear-gradient(
-    to right,
-    #3349e0 0%, #617ee6 47%, #617ee6 53%, #3349e0 100%
-  );
-
-  /* ---- Boot. ---- */
-  --bios-face: #000000;
-  --bios-text: #ffffff;
-  --bios-bar: #c0c0c0;
-  --splash-face: #003399;
-  --welcome-face: #5a7edc;
-
-  /* ---- Desktop icons. ---- */
-  --icon-width: 70px;
-  --icon-image: 30px;
-  --icon-gutter: 6px;
-  --desktop-inset: 40px;
-
-  /* ---- Touch: the brief's 44px minimum, only ever applied on coarse pointers. ---- */
   --touch-target: 44px;
-  --mobile-titlebar-height: 44px;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --taskbar-height: 44px;
+  }
 }

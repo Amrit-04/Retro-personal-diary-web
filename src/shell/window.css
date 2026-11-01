@@ -1,33 +1,270 @@
 /**
- * Luna window chrome, at the measurements recorded in tokens.css: a 3px blue frame,
- * a 28px title band that reaches the window edges, 22px caption buttons, and eight
- * resize handles whose hit area is wider than the visible edge.
+ * Window chrome, copied from ShizukuIchi/winXP (MIT — see ATTRIBUTIONS.md):
+ * src/WinXP/Windows/index.js and src/WinXP/Windows/HeaderButtons.js.
+ *
+ * The styled-components template literals are transcribed one property at a time.
+ * The only change is mechanical: the `isFocus` interpolations became the
+ * `.window.is-blurred` overrides at the top, so the DOM does not need a style
+ * object. The reference's font ('Noto Sans', a web font) is replaced by the brief's
+ * local stack; nothing else was touched.
+ *
+ * Everything after the "beyond the reference" marker is ours: the eight resize
+ * handles, maximized geometry, the phone sheet, and the drag hint.
  */
-@import '../styles/tokens.css';
 
-.win {
+.window {
+  display: flex;
   position: absolute;
+  padding: 3px;
+  background-color: #0831d9;
+  flex-direction: column;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.window.is-blurred {
+  background-color: #6582f5;
+}
+
+.header__bg {
+  background: linear-gradient(to bottom, #0058ee 0%, #3593ff 4%, #288eff 6%, #127dff 8%, #036ffc 10%, #0262ee 14%, #0057e5 20%, #0054e3 24%, #0055eb 56%, #005bf5 66%, #026afe 76%, #0062ef 86%, #0052d6 92%, #0040ab 94%, #003092 100%);
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 28px;
+  pointer-events: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  overflow: hidden;
+}
+
+.window.is-blurred .header__bg {
+  background: linear-gradient(to bottom, #7697e7 0%, #7e9ee3 3%, #94afe8 6%, #97b4e9 8%, #82a5e4 14%, #7c9fe2 17%, #7996de 25%, #7b99e1 56%, #82a9e9 81%, #80a5e7 89%, #7b96e1 94%, #7a93df 97%, #abbae3 100%);
+}
+
+.header__bg::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0;
+  opacity: 1;
+  background: linear-gradient(to right, #1638e6 0%, transparent 100%);
+  top: 0;
+  bottom: 0;
+  width: 15px;
+}
+
+.header__bg::after {
+  content: '';
+  opacity: 1;
+  display: block;
+  position: absolute;
+  right: 0;
+  background: linear-gradient(to left, #1638e6 0%, transparent 100%);
+  top: 0;
+  bottom: 0;
+  width: 15px;
+}
+
+.window.is-blurred .header__bg::before {
+  opacity: 0.3;
+}
+
+.window.is-blurred .header__bg::after {
+  opacity: 0.4;
+}
+
+.app__header {
+  display: flex;
+  height: 25px;
+  line-height: 25px;
+  font-weight: 700;
+  font-size: 12px;
+  font-family: var(--font-title);
+  text-shadow: 1px 1px #000;
+  color: white;
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  align-items: center;
+}
+
+.app__header__icon {
+  width: 15px;
+  height: 15px;
+  margin-left: 1px;
+  margin-right: 3px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app__header__icon .xp-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.app__header__title {
+  flex: 1;
+  pointer-events: none;
+  padding-right: 5px;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.app__content {
+  flex: 1;
+  /* Without min-height:0 a flex item grows to its content and spills out of the
+     window frame instead of letting the program scroll inside it. */
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: var(--window-frame-pad);
-  padding-top: 0;
-  background: var(--xp-blue-frame);
-  border-radius: var(--window-radius-top) var(--window-radius-top) 0 0;
-  box-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
-  color: var(--xp-face-text);
-  overflow: visible;
+  overflow: hidden;
+  position: relative;
+  margin-top: 25px;
+  height: calc(100% - 25px);
 }
 
-.win.is-blurred {
-  background: var(--xp-blue-frame-blurred);
+/* ---- HeaderButtons.js ---- */
+
+.header__buttons {
+  opacity: 1;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  margin-top: -1px;
+  margin-right: 1px;
+  flex: none;
 }
+
+.window.is-blurred .header__buttons {
+  opacity: 0.6;
+}
+
+.header__button {
+  margin-right: 1px;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #fff;
+  border-radius: 3px;
+}
+
+.header__button:hover {
+  filter: brightness(120%);
+}
+
+.header__button:hover:active {
+  filter: brightness(90%);
+}
+
+.header__button--minimize {
+  box-shadow: inset 0 -1px 2px 1px #4646ff;
+  background-image: radial-gradient(circle at 90% 90%, #0054e9 0%, #2263d5 55%, #4479e4 70%, #a3bbec 90%, white 100%);
+}
+
+.header__button--minimize::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 13px;
+  height: 3px;
+  width: 8px;
+  background-color: white;
+}
+
+.header__button--maximize {
+  box-shadow: inset 0 -1px 2px 1px #4646ff;
+  background-image: radial-gradient(circle at 90% 90%, #0054e9 0%, #2263d5 55%, #4479e4 70%, #a3bbec 90%, white 100%);
+}
+
+.header__button--maximize::before {
+  content: '';
+  position: absolute;
+  display: block;
+  left: 4px;
+  top: 4px;
+  box-shadow: inset 0 3px white, inset 0 0 0 1px white;
+  height: 12px;
+  width: 12px;
+}
+
+.header__button--maximized {
+  box-shadow: inset 0 -1px 2px 1px #4646ff;
+  background-image: radial-gradient(circle at 90% 90%, #0054e9 0%, #2263d5 55%, #4479e4 70%, #a3bbec 90%, white 100%);
+}
+
+.header__button--maximized::before {
+  content: '';
+  position: absolute;
+  display: block;
+  left: 7px;
+  top: 4px;
+  box-shadow: inset 0 2px white, inset 0 0 0 1px white;
+  height: 8px;
+  width: 8px;
+}
+
+.header__button--maximized::after {
+  content: '';
+  position: absolute;
+  display: block;
+  left: 4px;
+  top: 7px;
+  box-shadow: inset 0 2px white, inset 0 0 0 1px white, 1px -1px #136dff;
+  height: 8px;
+  width: 8px;
+  background-color: #136dff;
+}
+
+.header__button--close {
+  box-shadow: inset 0 -1px 2px 1px #da4600;
+  background-image: radial-gradient(circle at 90% 90%, #cc4600 0%, #dc6527 55%, #cd7546 70%, #ffccb2 90%, white 100%);
+}
+
+.header__button--close::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 2px;
+  transform: rotate(45deg);
+  height: 16px;
+  width: 2px;
+  background-color: white;
+}
+
+.header__button--close::after {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 2px;
+  transform: rotate(-45deg);
+  height: 16px;
+  width: 2px;
+  background-color: white;
+}
+
+.header__button--disable {
+  outline: none;
+  opacity: 0.5;
+}
+
+.header__button--disable:hover {
+  filter: brightness(100%);
+}
+
+/* ---- beyond the reference: gesture plumbing and responsive geometry ---- */
 
 /* Only ever present between pointerdown and pointerup. */
-.win.is-busy {
+.window.is-busy {
   will-change: transform, width, height;
 }
 
-.win.is-maximized {
+.window.is-maximized {
   left: 0 !important;
   top: 0 !important;
   width: auto !important;
@@ -37,198 +274,19 @@
   border-radius: 0;
 }
 
-/* ---- Title band ---- */
-.win-head {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  height: var(--titlebar-band);
-  margin: 0 calc(var(--window-frame-pad) * -1);
-  padding: 0 3px 0 7px;
-  border-radius: var(--window-radius-top) var(--window-radius-top) 0 0;
-  background: var(--grad-title-active);
-  color: #fff;
-  font-family: var(--font-title);
-  font-size: var(--size-title);
-  font-weight: 700;
-  text-shadow: 1px 1px rgba(0, 0, 0, 0.6);
-  cursor: default;
-  flex: none;
-  /* Touch dragging the title of a sheet must not scroll the page behind it. */
-  touch-action: none;
+.window.is-maximized .header__bg,
+.window.is-maximized .header__bg::before,
+.window.is-maximized .header__bg::after {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
-.win.is-blurred .win-head {
-  background: var(--grad-title-inactive);
+.window.is-maximized .app__header {
+  left: 3px;
+  right: 3px;
 }
 
-/* The two rounded glows at the ends of the band. */
-.win-head::before,
-.win-head::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 15px;
-  pointer-events: none;
-}
-
-.win-head::before {
-  left: 0;
-  border-radius: var(--window-radius-top) 0 0 0;
-  background: linear-gradient(to right, #1638e6, rgba(22, 56, 230, 0));
-  opacity: 0.35;
-}
-
-.win-head::after {
-  right: 0;
-  border-radius: 0 var(--window-radius-top) 0 0;
-  background: linear-gradient(to left, #1638e6, rgba(22, 56, 230, 0));
-  opacity: 0.35;
-}
-
-.win.is-active .win-head::before,
-.win.is-active .win-head::after {
-  opacity: 1;
-}
-
-.win-icon {
-  display: flex;
-  align-items: center;
-  flex: none;
-  margin-top: -2px;
-}
-
-.win-title {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding-right: 6px;
-}
-
-/* ---- Caption buttons ---- */
-.win-captions {
-  display: flex;
-  align-items: center;
-  gap: 1px;
-  flex: none;
-}
-
-.caption {
-  position: relative;
-  width: var(--caption-size);
-  height: var(--caption-size);
-  border: 1px solid #fff;
-  border-radius: 3px;
-  background: var(--grad-cap-blue);
-  box-shadow: var(--shadow-cap-blue);
-  flex: none;
-}
-
-.caption:hover {
-  filter: brightness(120%);
-}
-
-.caption:active {
-  filter: brightness(90%);
-}
-
-.caption--close {
-  margin-left: 3px;
-  background: var(--grad-cap-red);
-  box-shadow: var(--shadow-cap-red);
-}
-
-.win.is-blurred .caption {
-  background: linear-gradient(to bottom, #b8c6e4, #7f8fae);
-  box-shadow: inset 0 -1px 2px 1px #6f7f9e;
-  filter: saturate(0.4);
-}
-
-/* Glyphs, drawn rather than shipped as images. */
-.caption--min::after {
-  content: '';
-  position: absolute;
-  left: 5px;
-  bottom: 5px;
-  width: 9px;
-  height: 3px;
-  background: #fff;
-}
-
-.caption--max::before {
-  content: '';
-  position: absolute;
-  left: 5px;
-  top: 6px;
-  width: 11px;
-  height: 9px;
-  border: 2px solid #fff;
-  border-top-width: 3px;
-  box-sizing: border-box;
-}
-
-.caption--close::before,
-.caption--close::after {
-  content: '';
-  position: absolute;
-  left: 4px;
-  top: 10px;
-  width: 13px;
-  height: 2px;
-  background: #fff;
-  border-radius: 1px;
-}
-
-.caption--close::before {
-  transform: rotate(45deg);
-}
-
-.caption--close::after {
-  transform: rotate(-45deg);
-}
-
-/* ---- Client area ---- */
-.win-body {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  background: var(--xp-face);
-  overflow: hidden;
-  contain: layout paint;
-}
-
-.win-loading {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.win-loading-bar {
-  width: 120px;
-  height: 4px;
-  border-radius: 2px;
-  background: linear-gradient(to right, #cfe0f7, #6f9be0, #cfe0f7);
-  animation: win-load 1.1s linear infinite;
-}
-
-@keyframes win-load {
-  from {
-    opacity: 0.35;
-  }
-  50% {
-    opacity: 1;
-  }
-  to {
-    opacity: 0.35;
-  }
-}
-
-/* ---- Resize handles: 3px visible edge, 9px hit area ---- */
+/* Eight handles, 9px of hit area against the 3px visible frame. */
 .rz {
   position: absolute;
   z-index: 2;
@@ -273,7 +331,6 @@
 .rz-sw {
   width: 14px;
   height: 14px;
-  cursor: nwse-resize;
 }
 
 .rz-nw {
@@ -300,41 +357,96 @@
   cursor: nwse-resize;
 }
 
-/* ---- Phones: a sheet, not a window ---- */
-.win.is-sheet {
-  left: 0 !important;
-  top: 0 !important;
-  width: auto !important;
-  height: auto !important;
-  right: 0;
-  bottom: 0;
-  padding: 0;
-  border-radius: 0;
-  box-shadow: none;
-  background: var(--xp-blue-frame);
+.win-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: #fff;
 }
 
-.win.is-sheet .win-head {
-  height: var(--mobile-titlebar-height);
-  margin: 0;
-  padding: 0 6px 0 10px;
+.win-loading-bar {
+  width: 120px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #cfe0f7, #6f9be0, #cfe0f7);
+  animation: win-load 1.1s linear infinite;
+}
+
+@keyframes win-load {
+  from {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.35;
+  }
+}
+
+/* ---- Phones: a full-height sheet, no drag, one large close button ---- */
+.window.is-sheet {
+  /* 100dvh, per the brief: the sheet is the whole screen, taskbar included. It sits
+     inside .desk-area, so the desktop CSS lifts that layer over the footer on phones. */
+  --sheet-top: env(safe-area-inset-top, 0px);
+  left: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+  width: auto !important;
+  height: 100dvh !important;
+  padding: 0;
   border-radius: 0;
+  background-color: #0831d9;
+}
+
+.window.is-sheet .header__bg {
+  height: calc(44px + var(--sheet-top));
+  border-radius: 0;
+}
+
+.window.is-sheet .app__header {
+  left: 8px;
+  right: 6px;
+  height: calc(44px + var(--sheet-top));
+  line-height: calc(44px + var(--sheet-top));
   font-size: 14px;
 }
 
-.win.is-sheet .win-head::before,
-.win.is-sheet .win-head::after {
+.window.is-sheet .app__header__icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+.window.is-sheet .app__content {
+  margin-top: calc(44px + var(--sheet-top));
+  height: calc(100% - 44px - var(--sheet-top));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.window.is-sheet .header__buttons {
+  height: 44px;
+  margin: 0;
+}
+
+/* One caption on a phone: the close button, and it is large. */
+.window.is-sheet .header__button--minimize,
+.window.is-sheet .header__button--maximize,
+.window.is-sheet .header__button--maximized {
   display: none;
 }
 
-.win.is-sheet .caption {
-  width: 32px;
-  height: 32px;
+.window.is-sheet .header__button--close {
+  width: 36px;
+  height: 34px;
 }
 
-.win.is-sheet .caption--close::before,
-.win.is-sheet .caption--close::after {
-  left: 8px;
-  top: 15px;
-  width: 15px;
+.window.is-sheet .header__button--close::before,
+.window.is-sheet .header__button--close::after {
+  left: 16px;
+  top: 8px;
+  height: 18px;
 }

@@ -2,6 +2,10 @@
  * A Luna window: title bar, three caption buttons, eight resize handles, and the
  * program's body.
  *
+ * The frame markup and class names are the reference's (`Windows/index.js` and
+ * `HeaderButtons.js`): `.header__bg` paints the 28px band, `.app__header` holds the
+ * icon, title and `.header__button`s over it, and `.app__content` clips the body.
+ *
  * Drag and resize never pass through state. The gesture writes
  * `transform: translate3d()` (or width/height) onto the node inside one rAF per
  * frame, and the final geometry is committed to the WindowState object on release,
@@ -66,6 +70,7 @@ export function Window({ win }: { win: WindowState }) {
   if (win.minimized) return null;
 
   const Body = win.body as ComponentType<{ win: WindowState }> | null;
+  const captions = win.captions;
 
   const onPointerDown = (event: PointerLike) => {
     const target = event.target as HTMLElement;
@@ -137,14 +142,15 @@ export function Window({ win }: { win: WindowState }) {
   }
 
   const classes = [
-    'win',
-    active ? 'is-active' : 'is-blurred',
+    'window',
+    active ? '' : 'is-blurred',
     win.maximized ? 'is-maximized' : '',
     mobile ? 'is-sheet' : '',
-    win.resizable && !mobile ? 'is-resizable' : '',
   ]
     .filter(Boolean)
     .join(' ');
+
+  const maximizable = !mobile && win.resizable;
 
   return (
     <div
@@ -158,50 +164,59 @@ export function Window({ win }: { win: WindowState }) {
         zIndex: win.z,
       }}
       onPointerDown={onPointerDown}
-      onDblClick={mobile || win.maximized ? undefined : () => toggleMaximize(win.id)}
+      onDblClick={(event) => {
+        if (mobile || !win.resizable) return;
+        if ((event.target as HTMLElement).closest('[data-caption]')) return;
+        toggleMaximize(win.id);
+      }}
       role="dialog"
       aria-label={win.title}
       aria-modal="false"
     >
-      <div class="win-head" data-titlebar="true">
-        <span class="win-icon">
-          <XpIcon name={win.icon} size={16} />
+      <div class="header__bg" />
+
+      <header class="app__header" data-titlebar="true">
+        <span class="app__header__icon">
+          <XpIcon name={win.icon} size={15} />
         </span>
-        <span class="win-title">{win.title}</span>
-        <span class="win-captions">
-          {!mobile && (
+        <div class="app__header__title">{win.title}</div>
+
+        <div class="header__buttons">
+          {captions.includes('minimize') && (
             <button
-              class="caption caption--min"
+              class="header__button header__button--minimize"
               type="button"
               data-caption="true"
               aria-label="Minimize"
               onClick={() => minimize(win.id)}
             />
           )}
-          {!mobile && (
+          {captions.includes('maximize') && (
             <button
-              class="caption caption--max"
+              class={`header__button ${
+                win.maximized ? 'header__button--maximized' : 'header__button--maximize'
+              }${maximizable ? '' : ' header__button--disable'}`}
               type="button"
               data-caption="true"
               aria-label={win.maximized ? 'Restore' : 'Maximize'}
-              onClick={() => toggleMaximize(win.id)}
+              onClick={() => maximizable && toggleMaximize(win.id)}
             />
           )}
           <button
-            class="caption caption--close"
+            class="header__button header__button--close"
             type="button"
             data-caption="true"
             aria-label="Close"
             onClick={() => close(win.id)}
           />
-        </span>
-      </div>
+        </div>
+      </header>
 
-      <div class="win-body">
+      <div class="app__content">
         {Body ? (
           <Body key={bodyKey(win)} win={win} />
         ) : (
-          <div class="win-loading">
+          <div class="win-loading" role="status" aria-label="Opening">
             <span class="win-loading-bar" />
           </div>
         )}

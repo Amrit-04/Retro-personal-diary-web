@@ -56,8 +56,3 @@ export function Wordmark({ size = 40 }: MarkProps): JSX.Element {
     </span>
   );
 }
-
-/** The "start" label on the taskbar button, in the reference's italic Trebuchet. */
-export function StartLabel(): JSX.Element {
-  return <span class="tb-start-text">start</span>;
-}

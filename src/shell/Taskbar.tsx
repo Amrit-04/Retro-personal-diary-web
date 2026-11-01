@@ -2,98 +2,108 @@
  * The taskbar: Start, one button per open window, and a tray with the volume switch
  * and a local clock.
  *
- * The clock is its own component, so ticking re-renders one text node instead of the
- * whole bar. On a phone the bar is 44px tall: the brief's tap-target floor outranks
- * the 30px measurement from the desktop reference, and the gradient carries the
- * identity either way.
+ * The markup and every class name are the reference's (`Footer/index.js`): a
+ * `.footer` with a `.footer__items.left` run of `.footer__window` buttons and a
+ * `.footer__items.right` tray. The clock is its own component, so ticking repaints a
+ * single text node instead of the whole bar.
  */
 import { useEffect, useState } from 'preact/hooks';
 import { muted, toggleMuted } from '../boot/sound';
-import { session } from '../boot/machine';
-import { startOpen } from './StartMenu';
+import { StartMenu, startOpen } from './StartMenu';
 import { XpIcon } from './icons';
-import { LogoMark, StartLabel } from './marks';
+import { LogoMark } from './marks';
 import { activeId, focus, minimize, windows, type WindowState } from './windows';
-import './taskbar.css';
+import './footer.css';
 
 export function Taskbar() {
   const list = windows.value;
   const active = activeId.value;
 
-  const onTaskClick = (win: WindowState) => {
+  const onTaskPointerDown = (win: WindowState) => {
     if (win.id === active && !win.minimized) minimize(win.id);
     else focus(win.id);
   };
 
   return (
-    <div class="taskbar">
-      <button
-        class={`tb-start${startOpen.value ? ' is-open' : ''}`}
-        type="button"
-        aria-haspopup="true"
-        aria-expanded={startOpen.value}
-        onClick={toggleStart}
-      >
-        <LogoMark size={18} />
-        <StartLabel />
-      </button>
+    <footer class="footer">
+      <div class="footer__items left">
+        <div class="footer__start__menu">{startOpen.value && <StartMenu />}</div>
 
-      <div class="tb-tasks">
+        <button
+          class="footer__start"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded={startOpen.value}
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            startOpen.value = !startOpen.value;
+          }}
+        >
+          <LogoMark size={20} />
+          <span>start</span>
+        </button>
+
         {list.map((win) => (
           <button
             key={win.id}
-            class={`tb-task${win.id === active && !win.minimized ? ' is-active' : ''}`}
+            class={`footer__window ${win.id === active && !win.minimized ? 'focus' : 'cover'}`}
             type="button"
-            onClick={() => onTaskClick(win)}
+            onPointerDown={() => onTaskPointerDown(win)}
           >
-            <XpIcon name={win.icon} size={16} />
-            <span class="tb-task-text">{win.title}</span>
+            <span class="footer__icon">
+              <XpIcon name={win.icon} size={15} />
+            </span>
+            <span class="footer__text">{win.title}</span>
           </button>
         ))}
       </div>
 
-      <div class="tb-tray">
+      <div class="footer__items right">
         <button
-          class="tb-tray-button"
+          class="footer__tray-button"
           type="button"
           aria-pressed={!muted.value}
           aria-label={muted.value ? 'Unmute the startup sound' : 'Mute the startup sound'}
           title={muted.value ? 'Sound is off' : 'Sound is on'}
           onClick={toggleMuted}
         >
-          <XpIcon name={muted.value ? 'volume-muted' : 'volume'} size={16} />
+          <XpIcon name={muted.value ? 'volume-muted' : 'volume'} size={15} />
         </button>
         <Clock />
       </div>
-    </div>
+    </footer>
   );
 }
 
-function toggleStart(event: MouseEvent): void {
-  event.stopPropagation();
-  startOpen.value = !startOpen.value;
-}
-
-/** "10:53" — local time, no seconds, so a repaint happens once a minute at most. */
+/** "12:49 PM" — the reference's own formatter. */
 function Clock() {
-  const [text, setText] = useState(() => clockText(new Date()));
+  const [text, setText] = useState(getTime);
 
   useEffect(() => {
-    const tick = () => setText(clockText(new Date()));
-    const id = setInterval(tick, 10_000);
-    return () => clearInterval(id);
+    const timer = setInterval(() => {
+      const next = getTime();
+      setText((current) => (next === current ? current : next));
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
 
-  // The owner's name sits where XP put it: in the tray, left of the clock.
-  const owner = session.value?.name;
-  return (
-    <span class="tb-clock" title={owner ?? undefined}>
-      {text}
-    </span>
-  );
+  return <span class="footer__time">{text}</span>;
 }
 
-function clockText(date: Date): string {
-  const hours = date.getHours() % 12 || 12;
-  return `${hours}:${String(date.getMinutes()).padStart(2, '0')}`;
+function getTime(): string {
+  const date = new Date();
+  let hour = date.getHours();
+  let hourPostFix = 'AM';
+  let min: string | number = date.getMinutes();
+  if (hour >= 12) {
+    hour -= 12;
+    hourPostFix = 'PM';
+  }
+  if (hour === 0) {
+    hour = 12;
+  }
+  if (min < 10) {
+    min = '0' + min;
+  }
+  return `${hour}:${min} ${hourPostFix}`;
 }

@@ -14,7 +14,7 @@ import { clampAllWindows, isMobile, windows } from './windows';
 import { MemoWindow } from './Window';
 import { DesktopIcons } from './DesktopIcons';
 import { DialogLayer } from './DialogLayer';
-import { StartMenu, startOpen } from './StartMenu';
+import { startOpen } from './StartMenu';
 import { Taskbar } from './Taskbar';
 import './desktop.css';
 
@@ -70,7 +70,7 @@ export function Desktop() {
 
   return (
     <div
-      class="desk"
+      class={`desk${mobile && list.length > 0 ? ' has-sheet' : ''}`}
       onPointerDown={() => {
         startOpen.value = false;
       }}
@@ -106,7 +106,6 @@ export function Desktop() {
         </div>
       )}
 
-      {startOpen.value && <StartMenu />}
       <Taskbar />
       <DialogLayer />
     </div>

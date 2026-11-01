@@ -9,7 +9,7 @@
 import type { ComponentType } from 'preact';
 import { fileName } from '../lib/slug';
 import type { IconName } from './icons';
-import type { AppId, WindowBodyProps, WindowProps } from './windows';
+import type { AppId, CaptionName, WindowBodyProps, WindowProps } from './windows';
 
 export interface AppSpec {
   icon: IconName;
@@ -19,6 +19,8 @@ export interface AppSpec {
   minWidth: number;
   minHeight: number;
   resizable: boolean;
+  /** Which caption buttons to draw. Minesweeper is fixed-size, so it has no maximize. */
+  captions?: CaptionName[];
   singleton: boolean;
   load(): Promise<ComponentType<WindowBodyProps>>;
 }
@@ -28,7 +30,10 @@ const SPECS: Partial<Record<AppId, AppSpec>> = {
     icon: 'text',
     title: (props) => fileName(props.title ?? props.date ?? 'entry'),
     width: 640,
-    height: 540,
+    /* Tall enough that the 4:3 photo plus the sample text fits at the full content
+       width. If it did not, the vertical scrollbar would steal 15px of width, shrink
+       the photo, make the content fit again, and leave a bar that is never needed. */
+    height: 700,
     minWidth: 320,
     minHeight: 220,
     resizable: true,

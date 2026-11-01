@@ -2,7 +2,7 @@
  * The screen between signing in and the desktop — ~1.8s, and the place the startup
  * sound plays (machine.enterWelcome starts it). Same bar as the splash.
  */
-import { LogoMark, Wordmark } from '../shell/marks';
+import { LogoMark } from '../shell/marks';
 
 export function Welcome() {
   return (
@@ -15,9 +15,6 @@ export function Welcome() {
         <i />
         <i />
         <i />
-      </div>
-      <div class="splash-legal">
-        <Wordmark size={18} />
       </div>
     </div>
   );

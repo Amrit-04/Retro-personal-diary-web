@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Diary XP — Checkpoint 1</title>
+<style>
+  :root {
+    --ink: #14243c;
+    --muted: #5c6f88;
+    --line: #d7dee8;
+    --bg: #f4f6f9;
+    --card: #ffffff;
+    --accent: #1a5fb4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0 24px 72px;
+    background: var(--bg);
+    color: var(--ink);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  .page { max-width: 1500px; margin: 0 auto; }
+  header.top { padding: 56px 0 28px; border-bottom: 1px solid var(--line); }
+  .eyebrow { color: var(--accent); font-weight: 700; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  h1 { margin: 6px 0 10px; font-size: clamp(26px, 3.4vw, 42px); line-height: 1.12; letter-spacing: -0.02em; }
+  .lede { max-width: 76ch; margin: 0; font-size: 17px; color: #33445c; }
+  .meta { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 4px 11px; font-size: 12px; color: var(--muted); }
+  nav.jump { display: flex; flex-wrap: wrap; gap: 4px 18px; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  nav.jump a { color: var(--accent); text-decoration: none; }
+  nav.jump a:hover { text-decoration: underline; }
+  section { padding-top: 46px; }
+  h2 { margin: 0 0 4px; font-size: 24px; letter-spacing: -0.01em; }
+  .hint { margin: 0 0 20px; color: var(--muted); max-width: 88ch; font-size: 14px; }
+  .figgrid { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .figgrid.pair figure > a { display: flex; align-items: center; justify-content: center; padding: 10px; background: #e6ebf2; }
+  .figgrid.pair img { width: auto; max-width: 100%; max-height: 540px; }
+  figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; box-shadow: 0 1px 2px rgba(15, 30, 55, .04); }
+  figure > a { display: block; background: #0f1a28; }
+  figure img { display: block; width: 100%; height: auto; }
+  figcaption { padding: 10px 13px 12px; font-size: 12.5px; color: var(--muted); }
+  figcaption b { color: var(--ink); display: block; font-size: 13px; margin-bottom: 2px; }
+  .strip { display: grid; gap: 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .strip figure > a { background: #0f1a28; }
+  .phone-strip { display: grid; gap: 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .triple { display: grid; gap: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+  .triple img { width: 100%; }
+  table.timing { border-collapse: collapse; width: 100%; max-width: 760px; margin: 0 0 24px; background: var(--card); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; font-size: 13.5px; }
+  table.timing th, table.timing td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--line); }
+  table.timing tr:last-child td { border-bottom: 0; }
+  table.timing th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+  table.timing td:last-child { color: var(--muted); }
+  .note { border-left: 3px solid var(--accent); background: #eef4fb; padding: 12px 16px; border-radius: 0 6px 6px 0; font-size: 13.5px; color: #2c3e56; margin: 18px 0 0; max-width: 1000px; }
+  ul.checks { margin: 12px 0 0; padding-left: 20px; font-size: 14px; color: #33445c; }
+  ul.checks li { margin: 4px 0; }
+  footer.end { margin-top: 52px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+  @media (max-width: 900px) {
+    .figgrid, .triple { grid-template-columns: minmax(0, 1fr); }
+    .strip, .phone-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 560px) {
+    body { padding: 0 14px 48px; }
+    .strip, .phone-strip { grid-template-columns: minmax(0, 1fr); }
+    table.timing th:nth-child(4), table.timing td:nth-child(4) { display: none; }
+    table.timing th, table.timing td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="top">
+  <div class="eyebrow">Checkpoint 1 · for approval</div>
+  <h1>Diary XP — the shell, side by side with the references</h1>
+  <p class="lede">
+    Boot, logon, welcome, desktop, window frame, taskbar, Start menu and message box.
+    The Luna chrome is transcribed value-for-value from ShizukuIchi/winXP (MIT) and
+    rendered with Preact; the two forbidden XP brand marks are replaced with our own.
+    Explorer, the editor and Minesweeper still open a placeholder — the viewer window
+    is real so the chrome can be judged with content inside it.
+  </p>
+  <div class="meta">
+    <span class="pill">Captured from the production build</span>
+    <span class="pill">Headful Chrome, real scrollbars</span>
+    <span class="pill">1440 × 900 and 390 × 844</span>
+    <span class="pill">29 October 2026</span>
+  </div>
+</header>
+
+<nav class="jump">
+  <a href="#timing">Timings</a>
+  <a href="#bios">BIOS</a>
+  <a href="#splash">Splash</a>
+  <a href="#logon">Logon</a>
+  <a href="#welcome">Welcome</a>
+  <a href="#desktop">Desktop</a>
+  <a href="#window">Window</a>
+  <a href="#menu">Start menu</a>
+  <a href="#dialog">Message box</a>
+  <a href="#phone">Phone</a>
+  <a href="#notes">Notes</a>
+</nav>
+
+<section id="timing">
+  <h2>Phase timings</h2>
+  <p class="hint">Measured in this capture. A tap, click, Esc or Enter during the first two phases jumps straight to logon; the sequence plays once per tab.</p>
+  <table class="timing">
+    <tr><th>Phase</th><th>Target</th><th>Measured</th><th>What happens</th></tr>
+    <tr><td>BIOS POST</td><td>~1.5 s</td><td>1.5 s</td><td>Lines print in place, cursor blinks, footer bar waits</td></tr>
+    <tr><td>Splash</td><td>2–2.5 s</td><td>~2.0 s</td><td>Three-block CSS bar; runtime, auth and the recent query load behind it</td></tr>
+    <tr><td>Logon</td><td>until tapped</td><td>until tapped</td><td>Tile signs in; errors surface on this screen</td></tr>
+    <tr><td>Welcome</td><td>1.5–2 s</td><td>1.75 s</td><td>Startup chime, same bar, then the desktop fades in ≤150 ms</td></tr>
+  </table>
+
+  <div class="strip">
+    <figure><a href="assets/desktop-1-bios.png"><img src="assets/desktop-1-bios.png" alt="Our BIOS POST at 1440 by 900" loading="lazy" /></a><figcaption><b>1 · BIOS</b>1440 × 900</figcaption></figure>
+    <figure><a href="assets/desktop-2-splash.png"><img src="assets/desktop-2-splash.png" alt="Our splash screen" loading="lazy" /></a><figcaption><b>2 · Splash</b>our wordmark and book mark</figcaption></figure>
+    <figure><a href="assets/desktop-3-login.png"><img src="assets/desktop-3-login.png" alt="Our logon screen" loading="lazy" /></a><figcaption><b>3 · Logon</b>sample account, no Firebase configured</figcaption></figure>
+    <figure><a href="assets/desktop-4-welcome.png"><img src="assets/desktop-4-welcome.png" alt="Our welcome screen" loading="lazy" /></a><figcaption><b>4 · Welcome</b>1.75 s with the chime</figcaption></figure>
+  </div>
+</section>
+
+<section id="bios">
+  <h2>BIOS POST vs win32.run</h2>
+  <p class="hint">Same structure and pacing: lead-in, memory test, IDE channels, DMI verification. Brand names are reworded and the required lines from the brief are kept.</p>
+  <div class="figgrid">
+    <figure><a href="assets/ref-bios.png"><img src="assets/ref-bios.png" alt="win32.run BIOS reference" loading="lazy" /></a><figcaption><b>Reference — win32.run</b>Captured at 1440 × 900</figcaption></figure>
+    <figure><a href="assets/desktop-1-bios.png"><img src="assets/desktop-1-bios.png" alt="Our BIOS screen" loading="lazy" /></a><figcaption><b>Ours</b>Our own brand strings; “Memory Testing : 524288K OK”, IDE lines and “Verifying DMI Pool Data ...”</figcaption></figure>
+  </div>
+</section>
+
+<section id="splash">
+  <h2>Splash</h2>
+  <p class="hint">The reference direction is a branding splash with a loading bar. Ours uses the XP Home splash construction with our own wordmark and book mark in the brand position; no Windows flag, no “Windows XP” text.</p>
+  <div class="figgrid">
+    <figure><a href="assets/ref-splash.png"><img src="assets/ref-splash.png" alt="MitchIvin splash reference" loading="lazy" /></a><figcaption><b>Reference direction — mitchivin.com</b>Their mark and loading bar</figcaption></figure>
+    <figure><a href="assets/desktop-2-splash.png"><img src="assets/desktop-2-splash.png" alt="Our splash" loading="lazy" /></a><figcaption><b>Ours</b>Three-block bar, CSS only; “Personal Diary, Home Edition”</figcaption></figure>
+  </div>
+</section>
+
+<section id="logon">
+  <h2>Logon vs mitchivin.com</h2>
+  <p class="hint">Navy page, inset two-tone field, hairline divider, account tile on the right, Restart in the footer. In the live build the tile is the Google account; this capture is the sample mode shown when no Firebase config is present.</p>
+  <div class="figgrid">
+    <figure><a href="assets/ref-login.png"><img src="assets/ref-login.png" alt="mitchivin logon reference" loading="lazy" /></a><figcaption><b>Reference — mitchivin.com</b>1440 × 900</figcaption></figure>
+    <figure><a href="assets/desktop-3-login.png"><img src="assets/desktop-3-login.png" alt="Our logon screen" loading="lazy" /></a><figcaption><b>Ours</b>Same split and footer; our wordmark and mark</figcaption></figure>
+  </div>
+</section>
+
+<section id="welcome">
+  <h2>Welcome</h2>
+  <p class="hint">The blue welcome field between sign-in and the desktop. No reference capture was usable for this phase (the reference frames are black), so this is shown on its own.</p>
+  <div class="figgrid pair">
+    <figure><a href="assets/desktop-4-welcome.png"><img src="assets/desktop-4-welcome.png" alt="Our welcome screen" loading="lazy" /></a><figcaption><b>Ours — desktop</b>Book mark + “Welcome”, progress bar, startup chime</figcaption></figure>
+    <figure><a href="assets/phone-4-welcome.png"><img src="assets/phone-4-welcome.png" alt="Our welcome screen at phone width" loading="lazy" /></a><figcaption><b>Ours — phone</b>Same composition at 390 × 844</figcaption></figure>
+  </div>
+</section>
+
+<section id="desktop">
+  <h2>Desktop vs Windows XP</h2>
+  <p class="hint">Taskbar, tray, Start button and desktop icon treatment follow the reference. The wallpaper is our own generated Bliss-style image, not Microsoft's asset; the program list is the brief's.</p>
+  <div class="figgrid">
+    <figure><a href="assets/ref-desktop.png"><img src="assets/ref-desktop.png" alt="Windows XP desktop reference" loading="lazy" /></a><figcaption><b>Reference — winXP</b>1440 × 900, real Bliss, Winamp and My Computer</figcaption></figure>
+    <figure><a href="assets/desktop-5-desktop.png"><img src="assets/desktop-5-desktop.png" alt="Our desktop" loading="lazy" /></a><figcaption><b>Ours</b>File Explorer, Minesweeper, New Entry, then the last seven days — one icon per entry</figcaption></figure>
+  </div>
+</section>
+
+<section id="window">
+  <h2>Window frame vs Windows XP</h2>
+  <p class="hint">The frame, title gradient, caption buttons and inner edge are the reference's values. The content here is our viewer (filename as the title, long date, photo, pre-wrapped text).</p>
+  <div class="figgrid">
+    <figure><a href="assets/ref-startmenu.png"><img src="assets/ref-startmenu.png" alt="Windows XP My Computer window reference" loading="lazy" /></a><figcaption><b>Reference — winXP</b>Active window chrome and taskbar button</figcaption></figure>
+    <figure><a href="assets/desktop-6-window.png"><img src="assets/desktop-6-window.png" alt="Our viewer window" loading="lazy" /></a><figcaption><b>Ours</b>640 × 700 viewer, 8 resize handles, blurred title state available</figcaption></figure>
+  </div>
+</section>
+
+<section id="menu">
+  <h2>Start menu vs Windows XP</h2>
+  <p class="hint">Header, orange rule, program column, entries column, footer and Log Off follow the reference geometry. Our items are the brief's three programs plus the seven most recent entries with thumbnails and short dates.</p>
+  <div class="figgrid">
+    <figure><a href="assets/ref-startmenu.png"><img src="assets/ref-startmenu.png" alt="Windows XP Start menu reference" loading="lazy" /></a><figcaption><b>Reference — winXP</b>Start menu over My Computer</figcaption></figure>
+    <figure><a href="assets/desktop-7-startmenu.png"><img src="assets/desktop-7-startmenu.png" alt="Our Start menu" loading="lazy" /></a><figcaption><b>Ours</b>Same columns and footer; entries replace My Documents</figcaption></figure>
+  </div>
+</section>
+
+<section id="dialog">
+  <h2>Message box</h2>
+  <p class="hint">The Luna message box used for inline errors and for the “not installed yet” placeholder while the diary apps come later. No alerts.</p>
+  <div class="figgrid pair">
+    <figure><a href="assets/desktop-8-dialog.png"><img src="assets/desktop-8-dialog.png" alt="Our message box" loading="lazy" /></a><figcaption><b>Ours — desktop</b>Dialog over the viewer, modal</figcaption></figure>
+    <figure><a href="assets/phone-8-dialog.png"><img src="assets/phone-8-dialog.png" alt="Our message box on phone" loading="lazy" /></a><figcaption><b>Ours — phone</b>Same dialog at 390 × 844, 44 px OK target</figcaption></figure>
+  </div>
+</section>
+
+<section id="phone">
+  <h2>Phone</h2>
+  <p class="hint">No XP phone reference exists, so these follow the brief's mobile rules: 3–4 column icon grid, 44 px targets, full-screen sheets on <code>100dvh</code> with safe areas, large close, Back closes the top window.</p>
+  <div class="triple">
+    <figure><a href="assets/ref-mobile.png"><img src="assets/ref-mobile.png" alt="winXP mobile reference" loading="lazy" /></a><figcaption><b>Reference — winXP on a phone</b>Desktop at 390 px, taskbar visible</figcaption></figure>
+    <figure><a href="assets/phone-5-desktop.png"><img src="assets/phone-5-desktop.png" alt="Our phone desktop" loading="lazy" /></a><figcaption><b>Ours — desktop</b>Four icons per row, then the newest entries</figcaption></figure>
+    <figure><a href="assets/phone-6-window.png"><img src="assets/phone-6-window.png" alt="Our phone sheet" loading="lazy" /></a><figcaption><b>Ours — full-screen sheet</b>44 px title bar, large close, no drag or resize</figcaption></figure>
+  </div>
+  <div class="triple" style="margin-top:18px">
+    <figure><a href="assets/phone-7-startmenu.png"><img src="assets/phone-7-startmenu.png" alt="Our phone Start menu" loading="lazy" /></a><figcaption><b>Ours — Start menu</b>Full width, 44 px rows, Log Off bar</figcaption></figure>
+    <figure><a href="assets/phone-2-splash.png"><img src="assets/phone-2-splash.png" alt="Our phone splash" loading="lazy" /></a><figcaption><b>Ours — splash</b>Brand holds at 390 px</figcaption></figure>
+    <figure><a href="assets/phone-3-login.png"><img src="assets/phone-3-login.png" alt="Our phone logon" loading="lazy" /></a><figcaption><b>Ours — logon</b>Stacked columns, Restart centred</figcaption></figure>
+  </div>
+</section>
+
+<section id="notes">
+  <h2>What to look at</h2>
+  <ul class="checks">
+    <li>The chrome is the reference's own CSS and markup, not an eyeballed approximation.</li>
+    <li>Our wordmark and open-book mark replace the Windows XP wordmark and flag in the same positions.</li>
+    <li>The Start button keeps the sampled glossy ladder from the reference; the taskbar is 30 px.</li>
+    <li>The Start menu covers the viewer's short third line in the Start-menu shot because the line ends behind the menu — that is occlusion, not clipping; with the menu closed the line is visible.</li>
+    <li>Nothing here is diary content: the entries are sample fixtures, and File Explorer / Minesweeper / New Entry open the placeholder dialog until you approve the look.</li>
+  </ul>
+  <p class="note">
+    If the shell looks right, the next order of work is: locks and rules tests, auth, data, explorer, viewer, the editor and Minesweeper — then the performance pass.
+    If something is off, name the screen and I will change it before anything else is built.
+  </p>
+</section>
+
+<footer class="end">
+  Diary XP · Checkpoint 1 · screenshots from the production build, 29 October 2026 ·
+  chrome transcribed from ShizukuIchi/winXP (MIT) · brand marks and wallpaper are ours
+</footer>
+
+</div>
+</body>
+</html>
